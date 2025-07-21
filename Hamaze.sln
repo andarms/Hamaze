@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Arpg", "Hamaze.Arpg\Hamaze.Arpg.csproj", "{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Desktop", "Hamaze.Desktop\Hamaze.Desktop.csproj", "{7C50B115-EA19-47DA-AB83-DDCD166F5E05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Engine", "Hamaze.Engine\Hamaze.Engine.csproj", "{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C50B115-EA19-47DA-AB83-DDCD166F5E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C50B115-EA19-47DA-AB83-DDCD166F5E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C50B115-EA19-47DA-AB83-DDCD166F5E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C50B115-EA19-47DA-AB83-DDCD166F5E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
