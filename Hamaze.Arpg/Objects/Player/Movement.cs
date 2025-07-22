@@ -8,26 +8,27 @@ namespace Hamaze.Arpg.Objects.Player;
 public class Movement(Player player) : GameObject
 {
   public float Speed { get; set; } = 2;
+  public Vector2 Velocity { get; set; } = Vector2.Zero;
 
   public override void Update(float dt)
   {
     base.Update(dt);
-    var direction = Vector2.Zero;
+    Velocity = Vector2.Zero;
 
     if (Keyboard.GetState().IsKeyDown(Keys.Up))
-      direction.Y -= 1;
+      Velocity -= new Vector2(0, 1);
     if (Keyboard.GetState().IsKeyDown(Keys.Down))
-      direction.Y += 1;
+      Velocity += new Vector2(0, 1);
     if (Keyboard.GetState().IsKeyDown(Keys.Left))
-      direction.X -= 1;
+      Velocity -= new Vector2(1, 0);
     if (Keyboard.GetState().IsKeyDown(Keys.Right))
-      direction.X += 1;
+      Velocity += new Vector2(1, 0);
 
-    if (direction != Vector2.Zero)
+    if (Velocity != Vector2.Zero)
     {
-      direction.Normalize();
+      Velocity.Normalize();
     }
-    player.Position += direction * Speed;
+    player.Position += Velocity * Speed;
 
   }
 }

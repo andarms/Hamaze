@@ -24,5 +24,8 @@ public class Player : GameObject
       Speed = 4f
     };
     AddChild(movement);
+
+    WobbleMovementAnimation wobbleAnimation = new(sprite, movement);
+    AddChild(wobbleAnimation);
   }
 }
