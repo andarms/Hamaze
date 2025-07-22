@@ -35,7 +35,7 @@ public class ArpgGame : Game
         AssetsManager.LoadContent(Content);
         player = new Player
         {
-            Position = new Vector2(64, 64) // Center the player in the window
+            Position = new Vector2(64, 64)
         };
     }
 

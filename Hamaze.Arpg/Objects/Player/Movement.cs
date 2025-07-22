@@ -1,5 +1,5 @@
 using System;
-using Hamaze.Engine;
+using Hamaze.Engine.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,7 +7,7 @@ namespace Hamaze.Arpg.Objects.Player;
 
 public class Movement(Player player) : GameObject
 {
-  public float Speed { get; set; } = 100f; // Default speed, adjusted for frame rate
+  public float Speed { get; set; } = 1f;
 
   public override void Update(float dt)
   {
@@ -27,7 +27,7 @@ public class Movement(Player player) : GameObject
     {
       direction.Normalize();
     }
-    player.Position += direction * Speed * dt;
+    player.Position += direction * dt * Speed;
 
   }
 }

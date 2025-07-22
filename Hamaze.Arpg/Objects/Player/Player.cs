@@ -1,5 +1,5 @@
 using Hamaze.Arpg.Content;
-using Hamaze.Engine;
+using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 

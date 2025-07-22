@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Hamaze.Engine;
+namespace Hamaze.Engine.Core;
 
 public class GameObject
 {
