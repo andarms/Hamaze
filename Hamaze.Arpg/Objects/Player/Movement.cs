@@ -7,7 +7,7 @@ namespace Hamaze.Arpg.Objects.Player;
 
 public class Movement(Player player) : GameObject
 {
-  public float Speed { get; set; } = 1f;
+  public float Speed { get; set; } = 2;
 
   public override void Update(float dt)
   {
@@ -27,7 +27,7 @@ public class Movement(Player player) : GameObject
     {
       direction.Normalize();
     }
-    player.Position += direction * dt * Speed;
+    player.Position += direction * Speed;
 
   }
 }

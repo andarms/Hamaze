@@ -21,7 +21,7 @@ public class Player : GameObject
 
     Movement movement = new(player: this)
     {
-      Speed = 100f // Set a default speed for the player
+      Speed = 4f
     };
     AddChild(movement);
   }

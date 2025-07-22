@@ -22,6 +22,7 @@ public class ArpgGame : Game
         IsMouseVisible = true;
         graphics.PreferredBackBufferWidth = 1280;
         graphics.PreferredBackBufferHeight = 720;
+        graphics.SynchronizeWithVerticalRetrace = false;
     }
 
     protected override void Initialize()
