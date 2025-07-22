@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Core;
 
-public class GameObject
+public class GameObject : IDisposable
 {
+  public string Name { get; set; } = "Game Object";
   public Vector2 Position { get; set; } = Vector2.Zero;
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
@@ -56,6 +58,12 @@ public class GameObject
   public virtual void Draw(Renderer renderer)
   {
     Children.ForEach(c => c.Draw(renderer));
+  }
+
+  public void Dispose()
+  {
+    Children.ForEach(c => c.Dispose());
+    Children.Clear();
   }
   #endregion
 }

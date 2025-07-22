@@ -15,6 +15,11 @@ public class Renderer(GraphicsDevice graphicsDevice)
     Batch.Begin(samplerState: SamplerState.PointClamp);
   }
 
+  public void ClearBackground(Color color)
+  {
+    Batch.GraphicsDevice.Clear(color);
+  }
+
   public void DrawSprite(Sprite sprite)
   {
     if (sprite.Texture == null)
