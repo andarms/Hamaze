@@ -34,7 +34,7 @@ public class ArpgGame : Game
         AssetsManager.LoadContent(Content);
 
         // Initialize input system
-        InputService.Initialize();
+        InputManager.Initialize();
 
         // Setup default input map
         InputMap.CreateDefault().Apply();
@@ -48,7 +48,7 @@ public class ArpgGame : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
         // Update input service first
-        InputService.Update();
+        InputManager.Update();
 
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;

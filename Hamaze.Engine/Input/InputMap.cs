@@ -135,7 +135,7 @@ public class InputMap
     {
         foreach (var action in actions.Values)
         {
-            InputService.AddAction(action);
+            InputManager.AddAction(action);
         }
     }
 

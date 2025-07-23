@@ -8,7 +8,7 @@ namespace Hamaze.Engine.Input;
 /// <summary>
 /// A Godot-like input service that provides action-based input handling
 /// </summary>
-public static class InputService
+public static class InputManager
 {
     private static readonly Dictionary<string, InputAction> inputMap = new();
     private static KeyboardState currentKeyboardState;

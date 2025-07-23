@@ -14,9 +14,9 @@ public class Movement(Player player) : GameObject
   public override void Update(float dt)
   {
     base.Update(dt);
-    var direction = InputService.GetVector("move_left", "move_right", "move_up", "move_down");
+    var direction = InputManager.GetVector("move_left", "move_right", "move_up", "move_down");
 
-    var stickInput = InputService.GetGamepadLeftStick();
+    var stickInput = InputManager.GetGamepadLeftStick();
     if (stickInput.Length() > 0.1f)
     {
       direction = stickInput;
@@ -28,7 +28,7 @@ public class Movement(Player player) : GameObject
     }
 
     float currentSpeed = Speed;
-    if (InputService.IsActionPressed("run"))
+    if (InputManager.IsActionPressed("run"))
     {
       currentSpeed *= 2f; // Double speed when running
     }
