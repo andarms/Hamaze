@@ -1,5 +1,6 @@
 using System;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,22 +14,25 @@ public class Movement(Player player) : GameObject
   public override void Update(float dt)
   {
     base.Update(dt);
-    Velocity = Vector2.Zero;
+    var direction = InputService.GetVector("move_left", "move_right", "move_up", "move_down");
 
-    if (Keyboard.GetState().IsKeyDown(Keys.Up))
-      Velocity -= new Vector2(0, 1);
-    if (Keyboard.GetState().IsKeyDown(Keys.Down))
-      Velocity += new Vector2(0, 1);
-    if (Keyboard.GetState().IsKeyDown(Keys.Left))
-      Velocity -= new Vector2(1, 0);
-    if (Keyboard.GetState().IsKeyDown(Keys.Right))
-      Velocity += new Vector2(1, 0);
-
-    if (Velocity != Vector2.Zero)
+    var stickInput = InputService.GetGamepadLeftStick();
+    if (stickInput.Length() > 0.1f)
     {
-      Velocity.Normalize();
+      direction = stickInput;
     }
-    player.Position += Velocity * Speed;
 
+    if (direction != Vector2.Zero)
+    {
+      direction.Normalize();
+    }
+
+    float currentSpeed = Speed;
+    if (InputService.IsActionPressed("run"))
+    {
+      currentSpeed *= 2f; // Double speed when running
+    }
+    Velocity = direction;
+    player.Position += direction * currentSpeed;
   }
 }

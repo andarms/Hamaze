@@ -3,6 +3,7 @@ using Hamaze.Arpg.Objects.Player;
 using Hamaze.Arpg.Scenes;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -31,6 +32,13 @@ public class ArpgGame : Game
     {
         renderer = new Renderer(GraphicsDevice);
         AssetsManager.LoadContent(Content);
+
+        // Initialize input system
+        InputService.Initialize();
+
+        // Setup default input map
+        InputMap.CreateDefault().Apply();
+
         SceneManager.Initialize();
         SceneManager.SwitchTo<GameplayScene>();
     }
@@ -38,6 +46,9 @@ public class ArpgGame : Game
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
+
+        // Update input service first
+        InputService.Update();
 
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
