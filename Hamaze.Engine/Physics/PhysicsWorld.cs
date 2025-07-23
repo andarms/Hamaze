@@ -8,37 +8,125 @@ namespace Hamaze.Engine.Physics;
 public static class PhysicsWorld
 {
     public static readonly List<PhysicsObject> Objects = [];
+    private static SpatialGrid? _spatialGrid;
+    private static readonly Dictionary<PhysicsObject, Rectangle> _previousBounds = new();
+
+    // Grid configuration
+    private static int _cellSize = 64; // Default cell size
+    private static Rectangle _worldBounds = new(-10000, -10000, 20000, 20000); // Default world bounds
+
+
+    public static void Initialize()
+    {
+        // Initialize spatial grid for better performance
+        // Cell size of 128 pixels is good for objects around 16-32 pixel size
+        // World bounds cover a reasonable play area
+        InitializeSpatialGrid(cellSize: 128, worldBounds: new Rectangle(-2000, -2000, 4000, 4000));
+    }
+
+    /// <summary>
+    /// Initializes the spatial grid with custom parameters.
+    /// </summary>
+    /// <param name="cellSize">Size of each grid cell in pixels</param>
+    /// <param name="worldBounds">Bounds of the world space</param>
+    public static void InitializeSpatialGrid(int cellSize, Rectangle worldBounds)
+    {
+        _cellSize = cellSize;
+        _worldBounds = worldBounds;
+        _spatialGrid = new SpatialGrid(cellSize, worldBounds);
+
+        // Re-add existing objects to the new grid
+        foreach (var obj in Objects)
+        {
+            _spatialGrid.AddObject(obj);
+            _previousBounds[obj] = obj.Bounds;
+        }
+    }
+
+    /// <summary>
+    /// Gets the current spatial grid. Initializes with default values if not already initialized.
+    /// </summary>
+    private static SpatialGrid GetSpatialGrid()
+    {
+        if (_spatialGrid == null)
+        {
+            InitializeSpatialGrid(_cellSize, _worldBounds);
+        }
+        return _spatialGrid!;
+    }
 
     public static void AddObject(PhysicsObject obj)
     {
         Objects.Add(obj);
+        GetSpatialGrid().AddObject(obj);
+        _previousBounds[obj] = obj.Bounds;
     }
 
     public static void RemoveObject(PhysicsObject obj)
     {
         Objects.Remove(obj);
+        GetSpatialGrid().RemoveObject(obj);
+        _previousBounds.Remove(obj);
     }
 
     public static void Clear()
     {
         Objects.Clear();
+        GetSpatialGrid().Clear();
+        _previousBounds.Clear();
     }
 
     public static void Update(float dt)
     {
+        UpdateSpatialGrid();
         DetectCollisions();
+    }
+
+    /// <summary>
+    /// Updates the spatial grid for objects that have moved.
+    /// </summary>
+    private static void UpdateSpatialGrid()
+    {
+        var grid = GetSpatialGrid();
+        var objectsToUpdate = new List<(PhysicsObject obj, Rectangle oldBounds)>();
+
+        // Check which objects have moved
+        foreach (var obj in Objects)
+        {
+            if (_previousBounds.TryGetValue(obj, out var previousBounds) &&
+                previousBounds != obj.Bounds)
+            {
+                objectsToUpdate.Add((obj, previousBounds));
+            }
+        }
+
+        // Update moved objects in the grid
+        foreach (var (obj, oldBounds) in objectsToUpdate)
+        {
+            grid.UpdateObject(obj, oldBounds);
+            _previousBounds[obj] = obj.Bounds;
+        }
     }
 
     private static void DetectCollisions()
     {
         var currentCollisions = new List<Collision>();
+        var grid = GetSpatialGrid();
+        var checkedPairs = new HashSet<(PhysicsObject, PhysicsObject)>();
 
-        for (int i = 0; i < Objects.Count; i++)
+        // Use spatial grid for efficient collision detection
+        foreach (var objA in Objects)
         {
-            for (int j = i + 1; j < Objects.Count; j++)
+            var potentialCollisions = grid.GetPotentialCollisions(objA);
+
+            foreach (var objB in potentialCollisions)
             {
-                var objA = Objects[i];
-                var objB = Objects[j];
+                // Avoid duplicate checks and self-collision
+                var pair = objA.GetHashCode() < objB.GetHashCode() ? (objA, objB) : (objB, objA);
+                if (checkedPairs.Contains(pair))
+                    continue;
+
+                checkedPairs.Add(pair);
 
                 if (objA.Bounds.Intersects(objB.Bounds))
                 {
@@ -163,7 +251,7 @@ public static class PhysicsWorld
     /// </summary>
     public static List<PhysicsObject> GetObjectsInArea(Rectangle area)
     {
-        return Objects.Where(obj => obj.Bounds.Intersects(area)).ToList();
+        return GetSpatialGrid().GetObjectsInArea(area);
     }
 
     /// <summary>
@@ -179,7 +267,7 @@ public static class PhysicsWorld
     /// </summary>
     public static PhysicsObject? GetObjectAtPoint(Vector2 point)
     {
-        return Objects.FirstOrDefault(obj => obj.Bounds.Contains(new Point((int)point.X, (int)point.Y)));
+        return GetSpatialGrid().GetObjectAtPoint(point);
     }
 
     /// <summary>
@@ -187,47 +275,14 @@ public static class PhysicsWorld
     /// </summary>
     public static PhysicsObject? Raycast(Vector2 origin, Vector2 direction, float maxDistance)
     {
-        var normalizedDirection = Vector2.Normalize(direction);
-        var endPoint = origin + normalizedDirection * maxDistance;
-
-        foreach (var obj in Objects)
-        {
-            if (LineIntersectsRectangle(origin, endPoint, obj.Bounds))
-            {
-                return obj;
-            }
-        }
-
-        return null;
+        return GetSpatialGrid().Raycast(origin, direction, maxDistance);
     }
 
-    private static bool LineIntersectsRectangle(Vector2 start, Vector2 end, Rectangle rect)
+    /// <summary>
+    /// Gets debugging information about the spatial grid performance.
+    /// </summary>
+    public static (int TotalCells, int ObjectCount, float AverageObjectsPerCell) GetSpatialGridDebugInfo()
     {
-        // Check if either endpoint is inside the rectangle
-        if (rect.Contains(new Point((int)start.X, (int)start.Y)) ||
-            rect.Contains(new Point((int)end.X, (int)end.Y)))
-            return true;
-
-        // Check intersection with each edge of the rectangle
-        var topLeft = new Vector2(rect.Left, rect.Top);
-        var topRight = new Vector2(rect.Right, rect.Top);
-        var bottomLeft = new Vector2(rect.Left, rect.Bottom);
-        var bottomRight = new Vector2(rect.Right, rect.Bottom);
-
-        return LineIntersectsLine(start, end, topLeft, topRight) ||
-               LineIntersectsLine(start, end, topRight, bottomRight) ||
-               LineIntersectsLine(start, end, bottomRight, bottomLeft) ||
-               LineIntersectsLine(start, end, bottomLeft, topLeft);
-    }
-
-    private static bool LineIntersectsLine(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2)
-    {
-        var d = (a2.X - a1.X) * (b2.Y - b1.Y) - (a2.Y - a1.Y) * (b2.X - b1.X);
-        if (Math.Abs(d) < 0.0001f) return false; // Lines are parallel
-
-        var t = ((b1.X - a1.X) * (b2.Y - b1.Y) - (b1.Y - a1.Y) * (b2.X - b1.X)) / d;
-        var u = ((b1.X - a1.X) * (a2.Y - a1.Y) - (b1.Y - a1.Y) * (a2.X - a1.X)) / d;
-
-        return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+        return GetSpatialGrid().GetDebugInfo();
     }
 }
