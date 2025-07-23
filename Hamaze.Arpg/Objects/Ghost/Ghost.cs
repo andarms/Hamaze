@@ -2,16 +2,18 @@ using Hamaze.Arpg.Content;
 using Hamaze.Arpg.Objects.Ghost.States;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost;
 
-public class Ghost : GameObject
+public class Ghost : KinematicBody
 {
     private readonly StateMachine machine;
 
     public Ghost()
     {
+        Name = "Ghost";
         Sprite sprite = new(AssetsManager.TinyDungeon)
         {
             Position = Position,
@@ -20,6 +22,10 @@ public class Ghost : GameObject
             Source = new Rectangle(16, 160, 16, 16)
         };
         AddChild(sprite);
+
+        Vector2 size = new Vector2(16, 16) * Renderer.ScaleFactor;
+        Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
+        AddChild(collider);
 
         machine = new();
         MoveDown down = new(this);
@@ -39,6 +45,5 @@ public class Ghost : GameObject
     public override void Initialize()
     {
         base.Initialize();
-
     }
 }

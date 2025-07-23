@@ -60,7 +60,7 @@ public class GameObject : IDisposable
     Children.ForEach(c => c.Draw(renderer));
   }
 
-  public void Dispose()
+  public virtual void Dispose()
   {
     Children.ForEach(c => c.Dispose());
     Children.Clear();

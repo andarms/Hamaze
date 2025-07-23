@@ -1,7 +1,9 @@
+using System;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Scenes;
@@ -26,6 +28,18 @@ public class GameplayScene : Scene
             Position = new Vector2(128, 64)
         };
         AddChild(ghost);
+
+        player.OnCollisionEnter.Connect(collision =>
+        {
+            // CollisionResponse.Push(collision, new Vector2(1, 0));
+            Console.WriteLine($"Collision detected between {collision.ObjectA.Name} and {collision.ObjectB.Name}");
+        });
+    }
+
+    public override void Update(float dt)
+    {
+        base.Update(dt);
+        PhysicsWorld.Update(dt);
     }
 
     public override void Draw(Renderer renderer)
