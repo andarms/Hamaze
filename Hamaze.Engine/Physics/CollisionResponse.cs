@@ -11,36 +11,17 @@ public static class CollisionResponse
   private static readonly Vector2 DOWN = new(0, 1);
 
   /// <summary>
-  /// Stops the kinematic objects by resolving penetration, moving them to non-colliding positions.
+  /// Stops the dynamic objects by allowing minimal penetration and resolving only excessive overlap.
   /// </summary>
   public static void Stop(Collision collision)
   {
-    var objA = collision.ObjectA;
-    var objB = collision.ObjectB;
-    var normal = collision.Normal;
-    var penetration = collision.Penetration;
-
-    // Only move kinematic bodies (like players) away from static objects
-    bool aIsDynamic = objA is DynamicObject;
-    bool bIsDynamic = objB is DynamicObject;
-
-    if (aIsDynamic && !bIsDynamic)
+    if (collision.ObjectA is DynamicObject dynamicObject)
     {
-      // Move object A away from object B
-      objA.Position += normal * penetration;
+      dynamicObject.Velocity = Vector2.Zero;
     }
-    else if (bIsDynamic && !aIsDynamic)
+    if (collision.ObjectB is DynamicObject dynamicObjectB)
     {
-      // Move object B away from object A (reverse the normal)
-      objB.Position -= normal * penetration;
+      dynamicObjectB.Velocity = Vector2.Zero;
     }
-    else if (aIsDynamic && bIsDynamic)
-    {
-      // Both are dynamic, split the movement
-      var halfPenetration = penetration * 0.5f;
-      objA.Position += normal * halfPenetration;
-      objB.Position -= normal * halfPenetration;
-    }
-    // If neither is dynamic (both static), do nothing
   }
 }

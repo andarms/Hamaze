@@ -37,14 +37,14 @@ public class GameplayScene : Scene
 
         Box box = new()
         {
-            Position = new Vector2(200, 64)
+            Position = new Vector2(600, 64)
         };
         AddChild(box);
 
         // Add more boxes to test collision
         Box box2 = new()
         {
-            Position = new Vector2(128, 200)
+            Position = new Vector2(400, 200)
         };
         AddChild(box2);
 
@@ -59,13 +59,6 @@ public class GameplayScene : Scene
     {
         base.Update(dt);
         PhysicsWorld.Update(dt);
-
-        // Optional: Print spatial grid debug info periodically
-        if (showDebugInfo)
-        {
-            var debugInfo = PhysicsWorld.GetSpatialGridDebugInfo();
-            Console.WriteLine($"Spatial Grid - Cells: {debugInfo.TotalCells}, Objects: {debugInfo.ObjectCount}, Avg/Cell: {debugInfo.AverageObjectsPerCell:F2}");
-        }
     }
 
     public override void Draw(Renderer renderer)

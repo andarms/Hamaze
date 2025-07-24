@@ -7,44 +7,65 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Physics;
 
-public class PhysicsObject() : GameObject
+public enum PhysicsObjectType
 {
-    public Rectangle Bounds => new((int)GlobalPosition.X, (int)GlobalPosition.Y, Collider.Bounds.Width, Collider.Bounds.Height);
-    public Signal<Collision> OnCollisionEnter { get; internal set; } = new();
+    Solid,    // Static solid objects that block movement
+    Dynamic,  // Objects that can move and be blocked by solids
+    Trigger   // Objects that detect collisions but don't block movement
+}
 
-    public Signal<Collision> OnCollisionStay { get; internal set; } = new();
+public abstract class PhysicsObject : GameObject
+{
+    private Collider? collider;
 
-    public Signal<Collision> OnCollisionExit { get; internal set; } = new();
+    public Collider Collider
+    {
+        get => collider ?? throw new InvalidOperationException($"{Name} must have a Collider component.");
+        set => collider = value;
+    }
 
-    public List<Collision> PreviousCollisions { get; } = [];
-    public Collider Collider { get; set; } = null!;
+    public Rectangle Bounds => new(
+        (int)GlobalPosition.X + Collider.Bounds.X,
+        (int)GlobalPosition.Y + Collider.Bounds.Y,
+        Collider.Bounds.Width,
+        Collider.Bounds.Height
+    );
+
+    public abstract PhysicsObjectType PhysicsType { get; }
+
+    // Collision events
+    public Signal<Collision> OnCollisionEnter { get; } = new();
+    public Signal<Collision> OnCollisionStay { get; } = new();
+    public Signal<Collision> OnCollisionExit { get; } = new();
+
+    // Internal tracking
+    internal HashSet<PhysicsObject> CollidingWith = [];
+    internal Vector2 PreviousPosition;
 
     public override void Initialize()
     {
         base.Initialize();
-        Collider = Children.OfType<Collider>().FirstOrDefault() ?? throw new InvalidOperationException($"{Name} must have a Collider child.");
+
+        // Find collider in children or create a default one
+        collider = Children.OfType<Collider>().FirstOrDefault();
+        if (collider == null)
+        {
+            // Create a default collider if none is found
+            collider = new Collider(32, 32);
+            AddChild(collider);
+        }
+
+        PreviousPosition = Position;
         PhysicsWorld.AddObject(this);
     }
-
     public override void Dispose()
     {
         base.Dispose();
         PhysicsWorld.RemoveObject(this);
     }
-}
 
-public class DynamicObject : PhysicsObject
-{
-    public override void Initialize()
+    public bool Overlaps(PhysicsObject other)
     {
-        base.Initialize();
-
-        // Automatically handle collisions with solid objects
-        OnCollisionEnter.Connect(collision =>
-        {
-            CollisionResponse.Stop(collision);
-        });
+        return Bounds.Intersects(other.Bounds);
     }
 }
-public class SolidObject : PhysicsObject { }
-public class TriggerZone : PhysicsObject { }

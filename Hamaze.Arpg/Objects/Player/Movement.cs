@@ -8,8 +8,7 @@ namespace Hamaze.Arpg.Objects.Player;
 
 public class Movement(Player player) : GameObject
 {
-  public float Speed { get; set; } = 2;
-  public Vector2 Velocity { get; set; } = Vector2.Zero;
+  public float Speed { get; set; } = 100;
 
   public override void Update(float dt)
   {
@@ -30,9 +29,8 @@ public class Movement(Player player) : GameObject
     float currentSpeed = Speed;
     if (InputManager.IsActionPressed("run"))
     {
-      currentSpeed *= 2f; // Double speed when running
+      currentSpeed *= 2f;
     }
-    Velocity = direction;
-    player.Position += direction * currentSpeed;
+    player.Velocity = direction * currentSpeed;
   }
 }

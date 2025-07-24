@@ -7,20 +7,28 @@ namespace Hamaze.Engine.Physics;
 
 public static class PhysicsWorld
 {
-    public static readonly List<PhysicsObject> Objects = [];
+    private static readonly List<PhysicsObject> objects = [];
+    private static readonly List<SolidObject> solidObjects = [];
+    private static readonly List<DynamicObject> dynamicObjects = [];
+    private static readonly List<TriggerZone> triggerZones = [];
+
+    // Spatial grid for efficient collision detection
     private static SpatialGrid? spatialGrid;
-    private static readonly Dictionary<PhysicsObject, Rectangle> previousBounds = [];
+    private static readonly Dictionary<PhysicsObject, Rectangle> previousBounds = new();
 
-    private static int cellSize = 64;
-    private static Rectangle worldBounds = new(-10000, -10000, 20000, 20000);
+    // Default spatial grid settings
+    private static int cellSize = 128;
+    private static Rectangle worldBounds = new(-2000, -2000, 4000, 4000);
 
+    public static IReadOnlyList<PhysicsObject> Objects => objects;
+    public static IReadOnlyList<SolidObject> SolidObjects => solidObjects;
+    public static IReadOnlyList<DynamicObject> DynamicObjects => dynamicObjects;
+    public static IReadOnlyList<TriggerZone> TriggerZones => triggerZones;
 
     public static void Initialize()
     {
         // Initialize spatial grid for better performance
-        // Cell size of 128 pixels is good for objects around 16-32 pixel size
-        // World bounds cover a reasonable play area
-        InitializeSpatialGrid(cellSize: 128, worldBounds: new Rectangle(-2000, -2000, 4000, 4000));
+        InitializeSpatialGrid(cellSize, worldBounds);
     }
 
     /// <summary>
@@ -35,7 +43,7 @@ public static class PhysicsWorld
         spatialGrid = new SpatialGrid(cellSize, worldBounds);
 
         // Re-add existing objects to the new grid
-        foreach (var obj in Objects)
+        foreach (var obj in objects)
         {
             spatialGrid.AddObject(obj);
             previousBounds[obj] = obj.Bounds;
@@ -54,31 +62,61 @@ public static class PhysicsWorld
         return spatialGrid!;
     }
 
+    #region Object Management
     public static void AddObject(PhysicsObject obj)
     {
-        Objects.Add(obj);
+        objects.Add(obj);
         GetSpatialGrid().AddObject(obj);
         previousBounds[obj] = obj.Bounds;
+        switch (obj.PhysicsType)
+        {
+            case PhysicsObjectType.Solid:
+                solidObjects.Add((SolidObject)obj);
+                break;
+            case PhysicsObjectType.Dynamic:
+                dynamicObjects.Add((DynamicObject)obj);
+                break;
+            case PhysicsObjectType.Trigger:
+                triggerZones.Add((TriggerZone)obj);
+                break;
+        }
     }
 
     public static void RemoveObject(PhysicsObject obj)
     {
-        Objects.Remove(obj);
+        objects.Remove(obj);
         GetSpatialGrid().RemoveObject(obj);
         previousBounds.Remove(obj);
+
+        switch (obj.PhysicsType)
+        {
+            case PhysicsObjectType.Solid:
+                solidObjects.Remove((SolidObject)obj);
+                break;
+            case PhysicsObjectType.Dynamic:
+                dynamicObjects.Remove((DynamicObject)obj);
+                break;
+            case PhysicsObjectType.Trigger:
+                triggerZones.Remove((TriggerZone)obj);
+                break;
+        }
     }
 
     public static void Clear()
     {
-        Objects.Clear();
+        objects.Clear();
+        solidObjects.Clear();
+        dynamicObjects.Clear();
+        triggerZones.Clear();
         GetSpatialGrid().Clear();
         previousBounds.Clear();
     }
+    #endregion
 
     public static void Update(float dt)
     {
         UpdateSpatialGrid();
-        DetectCollisions();
+        ProcessCollisionEvents();
     }
 
     /// <summary>
@@ -89,7 +127,7 @@ public static class PhysicsWorld
         var grid = GetSpatialGrid();
         var objectsToUpdate = new List<(PhysicsObject obj, Rectangle oldBounds)>();
 
-        foreach (var obj in Objects)
+        foreach (var obj in objects)
         {
             if (previousBounds.TryGetValue(obj, out var lastKnownBounds) && lastKnownBounds != obj.Bounds)
             {
@@ -104,112 +142,135 @@ public static class PhysicsWorld
         }
     }
 
-    private static void DetectCollisions()
+    /// <summary>
+    /// Get the first solid object that this object is colliding with using spatial grid
+    /// </summary>
+    public static SolidObject? GetSolidCollision(PhysicsObject obj)
     {
-        var currentCollisions = new List<Collision>();
+        var grid = GetSpatialGrid();
+        var potentialCollisions = grid.GetPotentialCollisions(obj);
+
+        foreach (var other in potentialCollisions)
+        {
+            if (other is SolidObject solid && solid != obj && obj.Overlaps(solid))
+            {
+                return solid;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Resolve collision by moving the object out of the solid
+    /// </summary>
+    public static void ResolveCollision(PhysicsObject obj, SolidObject solid, bool resolveX, bool resolveY)
+    {
+        if (resolveX)
+        {
+            // Move object out along X axis
+            if (obj.Position.X < solid.Position.X)
+            {
+                // Object is to the left, push it left
+                obj.Position = new Vector2(solid.Position.X - obj.Collider.Width - obj.Collider.Offset.X, obj.Position.Y);
+            }
+            else
+            {
+                // Object is to the right, push it right
+                obj.Position = new Vector2(solid.Position.X + solid.Collider.Width - obj.Collider.Offset.X, obj.Position.Y);
+            }
+        }
+
+        if (resolveY)
+        {
+            // Move object out along Y axis
+            if (obj.Position.Y < solid.Position.Y)
+            {
+                // Object is above, push it up
+                obj.Position = new Vector2(obj.Position.X, solid.Position.Y - obj.Collider.Height - obj.Collider.Offset.Y);
+            }
+            else
+            {
+                // Object is below, push it down
+                obj.Position = new Vector2(obj.Position.X, solid.Position.Y + solid.Collider.Height - obj.Collider.Offset.Y);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Process collision enter/stay/exit events for all objects using spatial grid
+    /// </summary>
+    private static void ProcessCollisionEvents()
+    {
         var grid = GetSpatialGrid();
         var checkedPairs = new HashSet<(PhysicsObject, PhysicsObject)>();
 
-        foreach (var objA in Objects)
+        foreach (var objA in objects)
         {
             var potentialCollisions = grid.GetPotentialCollisions(objA);
             foreach (var objB in potentialCollisions)
             {
+                // Create a consistent pair ordering to avoid duplicate checks
                 var pair = objA.GetHashCode() < objB.GetHashCode() ? (objA, objB) : (objB, objA);
                 if (checkedPairs.Contains(pair)) { continue; }
 
                 checkedPairs.Add(pair);
 
-                if (objA.Bounds.Intersects(objB.Bounds))
+                // Skip if both are solid objects (they don't need collision events)
+                if (objA.PhysicsType == PhysicsObjectType.Solid && objB.PhysicsType == PhysicsObjectType.Solid)
                 {
-                    var collision = ComputeCollision(objA, objB);
-                    currentCollisions.Add(collision);
-                    ProcessCollisionEvents(collision);
+                    continue;
+                }
+
+                bool wasColliding = objA.CollidingWith.Contains(objB);
+                bool isColliding = objA.Overlaps(objB);
+
+                if (isColliding && !wasColliding)
+                {
+                    // Collision started
+                    var collision = CreateCollision(objA, objB);
+                    objA.CollidingWith.Add(objB);
+                    objB.CollidingWith.Add(objA);
+
+                    objA.OnCollisionEnter.Emit(collision);
+                    objB.OnCollisionEnter.Emit(collision);
+                }
+                else if (isColliding && wasColliding)
+                {
+                    // Collision continuing
+                    var collision = CreateCollision(objA, objB);
+                    objA.OnCollisionStay.Emit(collision);
+                    objB.OnCollisionStay.Emit(collision);
+                }
+                else if (!isColliding && wasColliding)
+                {
+                    // Collision ended
+                    var collision = CreateCollision(objA, objB);
+                    objA.CollidingWith.Remove(objB);
+                    objB.CollidingWith.Remove(objA);
+
+                    objA.OnCollisionExit.Emit(collision);
+                    objB.OnCollisionExit.Emit(collision);
                 }
             }
         }
-        ProcessCollisionExitEvents(currentCollisions);
     }
 
-    private static void ProcessCollisionEvents(Collision collision)
-    {
-        var objA = collision.ObjectA;
-        var objB = collision.ObjectB;
-
-        var previousCollisionA = objA.PreviousCollisions.FirstOrDefault(CollisionMatcher(objA, objB));
-        var previousCollisionB = objB.PreviousCollisions.FirstOrDefault(CollisionMatcher(objB, objA));
-
-        if (previousCollisionA == null && previousCollisionB == null)
-        {
-            objA.OnCollisionEnter.Emit(collision);
-            objB.OnCollisionEnter.Emit(collision);
-            objA.PreviousCollisions.Add(collision);
-            objB.PreviousCollisions.Add(collision);
-        }
-        else
-        {
-            // Continuing collision - trigger OnCollisionStay
-            objA.OnCollisionStay.Emit(collision);
-            objB.OnCollisionStay.Emit(collision);
-
-            // Update the collision in previous collisions
-            if (previousCollisionA != null)
-            {
-                objA.PreviousCollisions.Remove(previousCollisionA);
-                objA.PreviousCollisions.Add(collision);
-            }
-            if (previousCollisionB != null)
-            {
-                objB.PreviousCollisions.Remove(previousCollisionB);
-                objB.PreviousCollisions.Add(collision);
-            }
-        }
-    }
-
-    private static Func<Collision, bool> CollisionMatcher(PhysicsObject objA, PhysicsObject objB)
-    {
-        return c => (c.ObjectA == objA && c.ObjectB == objB) || (c.ObjectA == objB && c.ObjectB == objA);
-    }
-
-    private static void ProcessCollisionExitEvents(List<Collision> currentCollisions)
-    {
-        foreach (var obj in Objects)
-        {
-            var collisionsToRemove = new List<Collision>();
-
-            foreach (var previousCollision in obj.PreviousCollisions)
-            {
-                // Check if this previous collision is still happening
-                bool stillColliding = currentCollisions.Any(c =>
-                    (c.ObjectA == previousCollision.ObjectA && c.ObjectB == previousCollision.ObjectB) ||
-                    (c.ObjectA == previousCollision.ObjectB && c.ObjectB == previousCollision.ObjectA));
-
-                if (!stillColliding)
-                {
-                    // Collision has ended - trigger OnCollisionExit
-                    obj.OnCollisionExit.Emit(previousCollision);
-                    collisionsToRemove.Add(previousCollision);
-                }
-            }
-
-            // Remove ended collisions
-            foreach (var collision in collisionsToRemove)
-            {
-                obj.PreviousCollisions.Remove(collision);
-            }
-        }
-    }
-
-    private static Collision ComputeCollision(PhysicsObject objA, PhysicsObject objB)
+    /// <summary>
+    /// Create a collision object with proper normal and penetration
+    /// </summary>
+    private static Collision CreateCollision(PhysicsObject objA, PhysicsObject objB)
     {
         var boundsA = objA.Bounds;
         var boundsB = objB.Bounds;
-        Vector2 normal;
-        float penetration;
 
+        // Calculate overlap
         float overlapX = Math.Min(boundsA.Right, boundsB.Right) - Math.Max(boundsA.Left, boundsB.Left);
         float overlapY = Math.Min(boundsA.Bottom, boundsB.Bottom) - Math.Max(boundsA.Top, boundsB.Top);
 
+        Vector2 normal;
+        float penetration;
+
+        // Use the smaller overlap to determine collision normal
         if (overlapX < overlapY)
         {
             penetration = overlapX;
@@ -220,40 +281,18 @@ public static class PhysicsWorld
             penetration = overlapY;
             normal = boundsA.Center.Y < boundsB.Center.Y ? new Vector2(0, -1) : new Vector2(0, 1);
         }
+
         return new Collision(objA, objB, normal, penetration);
     }
 
     /// <summary>
-    /// Get all physics objects within a specified area
+    /// Get all objects within a specified area using spatial grid
     /// </summary>
     public static List<PhysicsObject> GetObjectsInArea(Rectangle area)
     {
         return GetSpatialGrid().GetObjectsInArea(area);
     }
 
-    /// <summary>
-    /// Get all physics objects of a specific type
-    /// </summary>
-    public static List<T> GetObjectsOfType<T>() where T : PhysicsObject
-    {
-        return Objects.OfType<T>().ToList();
-    }
-
-    /// <summary>
-    /// Check if a point is inside any physics object
-    /// </summary>
-    public static PhysicsObject? GetObjectAtPoint(Vector2 point)
-    {
-        return GetSpatialGrid().GetObjectAtPoint(point);
-    }
-
-    /// <summary>
-    /// Perform a raycast and return the first object hit
-    /// </summary>
-    public static PhysicsObject? Raycast(Vector2 origin, Vector2 direction, float maxDistance)
-    {
-        return GetSpatialGrid().Raycast(origin, direction, maxDistance);
-    }
 
     /// <summary>
     /// Gets debugging information about the spatial grid performance.

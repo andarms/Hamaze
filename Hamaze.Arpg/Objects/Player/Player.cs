@@ -25,11 +25,10 @@ public class Player : DynamicObject
 
     Movement movement = new(player: this)
     {
-      Speed = 4f
     };
     AddChild(movement);
 
-    WobbleMovementAnimation wobbleAnimation = new(sprite, movement);
+    WobbleMovementAnimation wobbleAnimation = new(sprite, this);
     AddChild(wobbleAnimation);
   }
 }

@@ -1,10 +1,11 @@
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Events;
+using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost.States;
 
-public class MoveUp(GameObject ghost) : State
+public class MoveUp(DynamicObject ghost) : State
 {
     public float Speed { get; set; } = 100f;
     public Signal TopReached = new();
@@ -12,7 +13,7 @@ public class MoveUp(GameObject ghost) : State
     public override void Update(float dt)
     {
         base.Update(dt);
-        ghost.Position += new Vector2(0, -1) * Speed * dt;
+        ghost.Velocity = new Vector2(0, -1) * Speed;
 
         if (ghost.Position.Y <= 0)
         {

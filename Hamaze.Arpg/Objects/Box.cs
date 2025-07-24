@@ -1,3 +1,4 @@
+using System;
 using Hamaze.Arpg.Content;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Physics;
@@ -19,8 +20,14 @@ public class Box : SolidObject
         };
         AddChild(sprite);
 
-        Vector2 size = new Vector2(16, 16) * Renderer.ScaleFactor;
+        Vector2 size = new Vector2(16) * Renderer.ScaleFactor;
         Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
         AddChild(collider);
+
+        OnCollisionStay.Connect(collision =>
+        {
+            Console.WriteLine($"Box collided with {collision.ObjectB.Name}");
+            CollisionResponse.Stop(collision);
+        });
     }
 }
