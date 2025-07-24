@@ -1,4 +1,5 @@
 using System;
+using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Core;
@@ -11,7 +12,7 @@ namespace Hamaze.Arpg.Scenes;
 public class GameplayScene : Scene
 {
     readonly Color backgroundColor = Color.CornflowerBlue;
-    private bool _showDebugInfo = true; // Toggle this to show spatial grid debug info
+    private bool _showDebugInfo = false; // Toggle this to show spatial grid debug info
 
     Player player;
     Ghost ghost;
@@ -33,11 +34,16 @@ public class GameplayScene : Scene
         };
         AddChild(ghost);
 
+
+        Box box = new()
+        {
+            Position = new Vector2(200, 64)
+        };
         player.OnCollisionEnter.Connect(collision =>
         {
-            // CollisionResponse.Push(collision, new Vector2(1, 0));
-            Console.WriteLine($"Collision detected between {collision.ObjectA.Name} and {collision.ObjectB.Name}");
+            CollisionResponse.Stop(collision);
         });
+        AddChild(box);
     }
 
     public override void Update(float dt)
