@@ -1,5 +1,6 @@
 
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Physics;
@@ -57,4 +58,17 @@ public class Collider : GameObject
     /// Create a collider with an offset from the parent position
     /// </summary>
     public static Collider FromSizeAndOffset(int width, int height, Vector2 offset) => new(width, height, offset);
+
+
+    public override void Draw(Renderer renderer)
+    {
+        base.Draw(renderer);
+        renderer.Shapes.DrawRectangle(
+        GlobalPosition + Offset,
+          new Vector2(64),
+          new Color(0, 0, 0, 50),
+          Color.Red,
+          1f
+        );
+    }
 }

@@ -9,6 +9,7 @@ public class GameObject : IDisposable
 {
   public string Name { get; set; } = "Game Object";
   public Vector2 Position { get; set; } = Vector2.Zero;
+
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
 

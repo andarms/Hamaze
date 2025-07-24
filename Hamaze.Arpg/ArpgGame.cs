@@ -30,7 +30,7 @@ public class ArpgGame : Game
 
     protected override void LoadContent()
     {
-        renderer = new Renderer(GraphicsDevice);
+        renderer = new Renderer(GraphicsDevice, Content);
         AssetsManager.LoadContent(Content);
 
         // Initialize input system
