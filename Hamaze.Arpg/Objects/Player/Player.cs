@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
 
-public class Player : KinematicBody
+public class Player : DynamicObject
 {
   public Player()
   {

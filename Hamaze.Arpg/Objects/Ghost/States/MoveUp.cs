@@ -1,6 +1,6 @@
-using System.Numerics;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Events;
+using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost.States;
 

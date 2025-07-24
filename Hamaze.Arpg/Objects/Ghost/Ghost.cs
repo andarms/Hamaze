@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost;
 
-public class Ghost : KinematicBody
+public class Ghost : DynamicObject
 {
     private readonly StateMachine machine;
 

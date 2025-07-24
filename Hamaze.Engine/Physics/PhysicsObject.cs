@@ -33,6 +33,18 @@ public class PhysicsObject() : GameObject
     }
 }
 
-public class KinematicBody : PhysicsObject { }
+public class DynamicObject : PhysicsObject
+{
+    public override void Initialize()
+    {
+        base.Initialize();
 
+        // Automatically handle collisions with solid objects
+        OnCollisionEnter.Connect(collision =>
+        {
+            CollisionResponse.Stop(collision);
+        });
+    }
+}
+public class SolidObject : PhysicsObject { }
 public class TriggerZone : PhysicsObject { }

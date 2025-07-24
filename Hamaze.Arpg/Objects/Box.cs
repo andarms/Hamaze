@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
 
-public class Box : KinematicBody
+public class Box : SolidObject
 {
     public Box()
     {

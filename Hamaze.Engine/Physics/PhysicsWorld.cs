@@ -8,12 +8,11 @@ namespace Hamaze.Engine.Physics;
 public static class PhysicsWorld
 {
     public static readonly List<PhysicsObject> Objects = [];
-    private static SpatialGrid? _spatialGrid;
-    private static readonly Dictionary<PhysicsObject, Rectangle> _previousBounds = new();
+    private static SpatialGrid? spatialGrid;
+    private static readonly Dictionary<PhysicsObject, Rectangle> previousBounds = [];
 
-    // Grid configuration
-    private static int _cellSize = 64; // Default cell size
-    private static Rectangle _worldBounds = new(-10000, -10000, 20000, 20000); // Default world bounds
+    private static int cellSize = 64;
+    private static Rectangle worldBounds = new(-10000, -10000, 20000, 20000);
 
 
     public static void Initialize()
@@ -31,15 +30,15 @@ public static class PhysicsWorld
     /// <param name="worldBounds">Bounds of the world space</param>
     public static void InitializeSpatialGrid(int cellSize, Rectangle worldBounds)
     {
-        _cellSize = cellSize;
-        _worldBounds = worldBounds;
-        _spatialGrid = new SpatialGrid(cellSize, worldBounds);
+        PhysicsWorld.cellSize = cellSize;
+        PhysicsWorld.worldBounds = worldBounds;
+        spatialGrid = new SpatialGrid(cellSize, worldBounds);
 
         // Re-add existing objects to the new grid
         foreach (var obj in Objects)
         {
-            _spatialGrid.AddObject(obj);
-            _previousBounds[obj] = obj.Bounds;
+            spatialGrid.AddObject(obj);
+            previousBounds[obj] = obj.Bounds;
         }
     }
 
@@ -48,32 +47,32 @@ public static class PhysicsWorld
     /// </summary>
     private static SpatialGrid GetSpatialGrid()
     {
-        if (_spatialGrid == null)
+        if (spatialGrid == null)
         {
-            InitializeSpatialGrid(_cellSize, _worldBounds);
+            InitializeSpatialGrid(cellSize, worldBounds);
         }
-        return _spatialGrid!;
+        return spatialGrid!;
     }
 
     public static void AddObject(PhysicsObject obj)
     {
         Objects.Add(obj);
         GetSpatialGrid().AddObject(obj);
-        _previousBounds[obj] = obj.Bounds;
+        previousBounds[obj] = obj.Bounds;
     }
 
     public static void RemoveObject(PhysicsObject obj)
     {
         Objects.Remove(obj);
         GetSpatialGrid().RemoveObject(obj);
-        _previousBounds.Remove(obj);
+        previousBounds.Remove(obj);
     }
 
     public static void Clear()
     {
         Objects.Clear();
         GetSpatialGrid().Clear();
-        _previousBounds.Clear();
+        previousBounds.Clear();
     }
 
     public static void Update(float dt)
@@ -90,21 +89,18 @@ public static class PhysicsWorld
         var grid = GetSpatialGrid();
         var objectsToUpdate = new List<(PhysicsObject obj, Rectangle oldBounds)>();
 
-        // Check which objects have moved
         foreach (var obj in Objects)
         {
-            if (_previousBounds.TryGetValue(obj, out var previousBounds) &&
-                previousBounds != obj.Bounds)
+            if (previousBounds.TryGetValue(obj, out var lastKnownBounds) && lastKnownBounds != obj.Bounds)
             {
-                objectsToUpdate.Add((obj, previousBounds));
+                objectsToUpdate.Add((obj, lastKnownBounds));
             }
         }
 
-        // Update moved objects in the grid
         foreach (var (obj, oldBounds) in objectsToUpdate)
         {
             grid.UpdateObject(obj, oldBounds);
-            _previousBounds[obj] = obj.Bounds;
+            previousBounds[obj] = obj.Bounds;
         }
     }
 
@@ -114,46 +110,37 @@ public static class PhysicsWorld
         var grid = GetSpatialGrid();
         var checkedPairs = new HashSet<(PhysicsObject, PhysicsObject)>();
 
-        // Use spatial grid for efficient collision detection
         foreach (var objA in Objects)
         {
             var potentialCollisions = grid.GetPotentialCollisions(objA);
-
             foreach (var objB in potentialCollisions)
             {
-                // Avoid duplicate checks and self-collision
                 var pair = objA.GetHashCode() < objB.GetHashCode() ? (objA, objB) : (objB, objA);
-                if (checkedPairs.Contains(pair))
-                    continue;
+                if (checkedPairs.Contains(pair)) { continue; }
 
                 checkedPairs.Add(pair);
 
                 if (objA.Bounds.Intersects(objB.Bounds))
                 {
-                    CalculateNormalAndPenetration(objA, objB, out var normal, out var penetration);
-                    var collision = new Collision(objA, objB, normal, penetration);
+                    var collision = ComputeCollision(objA, objB);
                     currentCollisions.Add(collision);
-
-                    ProcessCollisionEvents(objA, objB, collision);
+                    ProcessCollisionEvents(collision);
                 }
             }
         }
-
-        // Handle collision exit events
         ProcessCollisionExitEvents(currentCollisions);
     }
 
-    private static void ProcessCollisionEvents(PhysicsObject objA, PhysicsObject objB, Collision collision)
+    private static void ProcessCollisionEvents(Collision collision)
     {
-        // Check if this is a new collision or continuing collision
-        var previousCollisionA = objA.PreviousCollisions.FirstOrDefault(c =>
-            (c.ObjectA == objA && c.ObjectB == objB) || (c.ObjectA == objB && c.ObjectB == objA));
-        var previousCollisionB = objB.PreviousCollisions.FirstOrDefault(c =>
-            (c.ObjectA == objA && c.ObjectB == objB) || (c.ObjectA == objB && c.ObjectB == objA));
+        var objA = collision.ObjectA;
+        var objB = collision.ObjectB;
+
+        var previousCollisionA = objA.PreviousCollisions.FirstOrDefault(CollisionMatcher(objA, objB));
+        var previousCollisionB = objB.PreviousCollisions.FirstOrDefault(CollisionMatcher(objB, objA));
 
         if (previousCollisionA == null && previousCollisionB == null)
         {
-            // New collision - trigger OnCollisionEnter
             objA.OnCollisionEnter.Emit(collision);
             objB.OnCollisionEnter.Emit(collision);
             objA.PreviousCollisions.Add(collision);
@@ -177,6 +164,11 @@ public static class PhysicsWorld
                 objB.PreviousCollisions.Add(collision);
             }
         }
+    }
+
+    private static Func<Collision, bool> CollisionMatcher(PhysicsObject objA, PhysicsObject objB)
+    {
+        return c => (c.ObjectA == objA && c.ObjectB == objB) || (c.ObjectA == objB && c.ObjectB == objA);
     }
 
     private static void ProcessCollisionExitEvents(List<Collision> currentCollisions)
@@ -208,42 +200,27 @@ public static class PhysicsWorld
         }
     }
 
-    private static void CalculateNormalAndPenetration(PhysicsObject objA, PhysicsObject objB, out Vector2 normal, out float penetration)
+    private static Collision ComputeCollision(PhysicsObject objA, PhysicsObject objB)
     {
         var boundsA = objA.Bounds;
         var boundsB = objB.Bounds;
+        Vector2 normal;
+        float penetration;
 
-        // Calculate overlap in both axes
         float overlapX = Math.Min(boundsA.Right, boundsB.Right) - Math.Max(boundsA.Left, boundsB.Left);
         float overlapY = Math.Min(boundsA.Bottom, boundsB.Bottom) - Math.Max(boundsA.Top, boundsB.Top);
 
-        // Determine which axis has the smallest overlap (minimum translation vector)
         if (overlapX < overlapY)
         {
-            // Collision is horizontal
             penetration = overlapX;
-            if (boundsA.Center.X < boundsB.Center.X)
-            {
-                normal = new Vector2(-1, 0); // A is to the left of B
-            }
-            else
-            {
-                normal = new Vector2(1, 0); // A is to the right of B
-            }
+            normal = boundsA.Center.X < boundsB.Center.X ? new Vector2(-1, 0) : new Vector2(1, 0);
         }
         else
         {
-            // Collision is vertical
             penetration = overlapY;
-            if (boundsA.Center.Y < boundsB.Center.Y)
-            {
-                normal = new Vector2(0, -1); // A is above B
-            }
-            else
-            {
-                normal = new Vector2(0, 1); // A is below B
-            }
+            normal = boundsA.Center.Y < boundsB.Center.Y ? new Vector2(0, -1) : new Vector2(0, 1);
         }
+        return new Collision(objA, objB, normal, penetration);
     }
 
     /// <summary>

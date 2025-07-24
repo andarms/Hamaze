@@ -21,26 +21,26 @@ public static class CollisionResponse
     var penetration = collision.Penetration;
 
     // Only move kinematic bodies (like players) away from static objects
-    bool aIsKinematic = objA is KinematicBody;
-    bool bIsKinematic = objB is KinematicBody;
+    bool aIsDynamic = objA is DynamicObject;
+    bool bIsDynamic = objB is DynamicObject;
 
-    if (aIsKinematic && !bIsKinematic)
+    if (aIsDynamic && !bIsDynamic)
     {
       // Move object A away from object B
       objA.Position += normal * penetration;
     }
-    else if (bIsKinematic && !aIsKinematic)
+    else if (bIsDynamic && !aIsDynamic)
     {
       // Move object B away from object A (reverse the normal)
       objB.Position -= normal * penetration;
     }
-    else if (aIsKinematic && bIsKinematic)
+    else if (aIsDynamic && bIsDynamic)
     {
-      // Both are kinematic, split the movement
+      // Both are dynamic, split the movement
       var halfPenetration = penetration * 0.5f;
       objA.Position += normal * halfPenetration;
       objB.Position -= normal * halfPenetration;
     }
-    // If neither is kinematic (both static), do nothing
+    // If neither is dynamic (both static), do nothing
   }
 }

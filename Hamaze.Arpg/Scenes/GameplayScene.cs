@@ -12,7 +12,7 @@ namespace Hamaze.Arpg.Scenes;
 public class GameplayScene : Scene
 {
     readonly Color backgroundColor = Color.CornflowerBlue;
-    private bool _showDebugInfo = false; // Toggle this to show spatial grid debug info
+    private bool showDebugInfo = false; // Toggle this to show spatial grid debug info
 
     Player player;
     Ghost ghost;
@@ -39,11 +39,20 @@ public class GameplayScene : Scene
         {
             Position = new Vector2(200, 64)
         };
-        player.OnCollisionEnter.Connect(collision =>
-        {
-            CollisionResponse.Stop(collision);
-        });
         AddChild(box);
+
+        // Add more boxes to test collision
+        Box box2 = new()
+        {
+            Position = new Vector2(128, 200)
+        };
+        AddChild(box2);
+
+        Box box3 = new()
+        {
+            Position = new Vector2(300, 150)
+        };
+        AddChild(box3);
     }
 
     public override void Update(float dt)
@@ -52,7 +61,7 @@ public class GameplayScene : Scene
         PhysicsWorld.Update(dt);
 
         // Optional: Print spatial grid debug info periodically
-        if (_showDebugInfo)
+        if (showDebugInfo)
         {
             var debugInfo = PhysicsWorld.GetSpatialGridDebugInfo();
             Console.WriteLine($"Spatial Grid - Cells: {debugInfo.TotalCells}, Objects: {debugInfo.ObjectCount}, Avg/Cell: {debugInfo.AverageObjectsPerCell:F2}");
