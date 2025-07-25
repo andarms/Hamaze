@@ -12,7 +12,6 @@ namespace Hamaze.Arpg.Scenes;
 public class GameplayScene : Scene
 {
     readonly Color backgroundColor = Color.CornflowerBlue;
-    private bool showDebugInfo = false; // Toggle this to show spatial grid debug info
 
     Player player;
     Ghost ghost;
@@ -53,6 +52,14 @@ public class GameplayScene : Scene
             Position = new Vector2(300, 150)
         };
         AddChild(box3);
+
+
+        TriggerZone zone = new() { Position = new Vector2(500, 100), };
+        Collider collider = new(63, 128) { };
+        zone.AddChild(collider);
+        AddChild(zone);
+
+        zone.OnCollisionEnter.Connect(_ => Console.WriteLine("Collision with trigger zone!"));
     }
 
     public override void Update(float dt)

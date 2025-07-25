@@ -38,8 +38,8 @@ public class Ghost : DynamicObject
 
         machine.SetInitialState<MoveDown>();
         AddChild(machine);
-        // WobbleMovementAnimation wobbleAnimation = new(sprite, movement);
-        // AddChild(wobbleAnimation);
+        WobbleMovementAnimation wobbleAnimation = new(sprite, this);
+        AddChild(wobbleAnimation);
     }
 
     public override void Initialize()
