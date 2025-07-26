@@ -11,29 +11,23 @@ namespace Hamaze.Arpg.Objects.Player;
 public class Player : DynamicObject
 {
   public Health Health = new(100, 100);
+  public AnimationController Animations { get; private set; }
+
   public Player()
   {
     Name = "Player";
-    Sprite sprite = new(AssetsManager.TinyDungeon)
-    {
-      Position = Position,
-      Origin = new Vector2(8, 16),
-      Color = Color.White,
-      Source = new Rectangle(16, 112, 16, 16)
-    };
-    AddChild(sprite);
+    SpriteSheet sheet = new(AssetsManager.Boy, 16, 16);
+    AddChild(sheet);
+
+    Animations = new(sheet);
+    AddChild(Animations);
 
     Vector2 size = new Vector2(16, 16) * Renderer.ScaleFactor;
     Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
     AddChild(collider);
 
-    Movement movement = new(player: this)
-    {
-    };
+    Movement movement = new(player: this) { };
     AddChild(movement);
-
-    WobbleMovementAnimation wobbleAnimation = new(sprite, this);
-    AddChild(wobbleAnimation);
 
     Hurtbox hurtbox = new(Health);
     AddChild(hurtbox);
