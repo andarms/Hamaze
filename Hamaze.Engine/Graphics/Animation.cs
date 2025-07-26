@@ -10,12 +10,19 @@ public class Animation(SpriteSheet spriteSheet, List<int> frames) : GameObject
   private float timer = 0f;
   public float Speed { get; set; } = 100f; // milliseconds per frame
 
+  public override void Initialize()
+  {
+    base.Initialize();
+    currentFrame = 0;
+    spriteSheet.SetFrame(frames[currentFrame]);
+  }
+
   public override void Update(float dt)
   {
     base.Update(dt);
     timer += dt;
 
-    if (timer >= Speed / 1000f) // Convert milliseconds to seconds
+    if (timer >= Speed / 1000f)
     {
       currentFrame = (currentFrame + 1) % frames.Count;
       spriteSheet.SetFrame(frames[currentFrame]);

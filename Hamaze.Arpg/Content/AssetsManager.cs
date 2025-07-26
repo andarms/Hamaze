@@ -11,7 +11,7 @@ public static class AssetsManager
   public static void LoadContent(ContentManager Content)
   {
     TinyDungeon = Content.Load<Texture2D>("Sprites/TinyDungeon");
-    Boy = Content.Load<Texture2D>("Sprites/Boy/SpriteSheet");
+    Boy = Content.Load<Texture2D>("Sprites/NinjaGreen/SpriteSheet");
   }
 
   public static void UnloadContent()

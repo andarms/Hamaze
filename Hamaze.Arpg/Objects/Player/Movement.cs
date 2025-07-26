@@ -28,13 +28,14 @@ public class Movement(Player player) : GameObject
     // Update animation direction only when there's input
     if (direction != Vector2.Zero)
     {
-      if (Math.Abs(direction.X) > Math.Abs(direction.Y))
-      {
-        animationDirection = direction.X > 0 ? AnimationController.Direction.Right : AnimationController.Direction.Left;
-      }
-      else
+      if (direction.Y != 0)
       {
         animationDirection = direction.Y > 0 ? AnimationController.Direction.Down : AnimationController.Direction.Up;
+      }
+      if (direction.X != 0)
+      {
+
+        animationDirection = direction.X > 0 ? AnimationController.Direction.Right : AnimationController.Direction.Left;
       }
       lastDirection = animationDirection;
       animationType = AnimationController.AnimationType.Walk;
@@ -42,7 +43,6 @@ public class Movement(Player player) : GameObject
     }
     else
     {
-      // Use last direction when idle
       animationDirection = lastDirection;
       animationType = AnimationController.AnimationType.Idle;
     }
