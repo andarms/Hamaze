@@ -31,5 +31,11 @@ public class Health(int current, int max)
 
     Current += amount;
     if (Current > Max) { Current = Max; }
+    HealthChanged.Emit(Current);
+  }
+
+  public override string ToString()
+  {
+    return $"Health: {Current}/{Max}";
   }
 }

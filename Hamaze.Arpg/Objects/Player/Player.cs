@@ -10,6 +10,7 @@ namespace Hamaze.Arpg.Objects.Player;
 
 public class Player : DynamicObject
 {
+  public Health Health = new(100, 100);
   public Player()
   {
     Name = "Player";
@@ -34,22 +35,19 @@ public class Player : DynamicObject
     WobbleMovementAnimation wobbleAnimation = new(sprite, this);
     AddChild(wobbleAnimation);
 
-    Health health = new(100, 100);
-    Hurtbox hurtbox = new(health);
+    Hurtbox hurtbox = new(Health);
     AddChild(hurtbox);
-    Label healthLabel = new($"Health: {health.Current}/{health.Max}")
+    Label healthLabel = new(Health.ToString())
     {
       Position = new Vector2(0, -24),
       TextColor = Color.White,
       OutlineColor = Color.Black,
       OutlineThickness = 2,
     };
-    health.HealthChanged.Connect((currentHealth) =>
+    Health.HealthChanged.Connect((currentHealth) =>
     {
-      healthLabel.Text = $"Health: {currentHealth}/{health.Max}";
+      healthLabel.Text = Health.ToString();
     });
-
-
 
     AddChild(healthLabel);
   }

@@ -59,8 +59,7 @@ public class GameplayScene : Scene
         Collider collider = new(63, 128) { };
         zone.AddChild(collider);
         AddChild(zone);
-
-        zone.OnCollisionEnter.Connect(_ => Console.WriteLine("Collision with trigger zone!"));
+        zone.OnCollisionEnter.Connect(_ => player.Health.Heal(10));
     }
 
     public override void Update(float dt)
