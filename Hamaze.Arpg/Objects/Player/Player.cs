@@ -40,6 +40,9 @@ public class Player : DynamicObject
     Label healthLabel = new($"Health: {health.Current}/{health.Max}")
     {
       Position = new Vector2(0, -24),
+      TextColor = Color.White,
+      OutlineColor = Color.Black,
+      OutlineThickness = 2,
     };
     health.HealthChanged.Connect((currentHealth) =>
     {

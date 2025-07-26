@@ -56,6 +56,24 @@ public class Renderer(GraphicsDevice graphicsDevice, ContentManager content)
     Batch.DrawString(DefaultFont, text, position, color, rotation, origin, scale, SpriteEffects.None, 0f);
   }
 
+  public void DrawTextWithOutline(string text, Vector2 position, Color textColor, Color outlineColor, int outlineThickness, float rotation = 0f, Vector2 origin = default, float scale = 1f)
+  {
+    // Draw outline
+    for (int x = -outlineThickness; x <= outlineThickness; x++)
+    {
+      for (int y = -outlineThickness; y <= outlineThickness; y++)
+      {
+        if (x == 0 && y == 0) continue; // Skip center position
+
+        Vector2 outlineOffset = new Vector2(x, y);
+        Batch.DrawString(DefaultFont, text, position + outlineOffset, outlineColor, rotation, origin, scale, SpriteEffects.None, 0f);
+      }
+    }
+
+    // Draw main text on top
+    Batch.DrawString(DefaultFont, text, position, textColor, rotation, origin, scale, SpriteEffects.None, 0f);
+  }
+
   public void End()
   {
     Shapes.End();
