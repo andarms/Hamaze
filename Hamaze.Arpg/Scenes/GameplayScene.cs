@@ -2,7 +2,7 @@ using System;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Player;
-using Hamaze.Engine.Core;
+using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
@@ -20,6 +20,7 @@ public class GameplayScene : Scene
     {
 
         PhysicsWorld.Initialize();
+        AddLayer("Background", LayerPriority.Background);
 
         player = new Player
         {
@@ -51,7 +52,7 @@ public class GameplayScene : Scene
         {
             Position = new Vector2(300, 150)
         };
-        AddChild(spikes);
+        AddChild(spikes, "Background");
 
 
         TriggerZone zone = new() { Position = new Vector2(500, 100), };

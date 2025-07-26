@@ -2,6 +2,7 @@
 using Hamaze.Arpg.Objects.Player;
 using Hamaze.Arpg.Scenes;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Input;
 using Microsoft.Xna.Framework;

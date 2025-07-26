@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
-using Hamaze.Engine.Physics;
-using Microsoft.Xna.Framework;
-namespace Hamaze.Engine.Core;
+
+namespace Hamaze.Engine.Core.Scenes;
 
 public static class SceneManager
 {

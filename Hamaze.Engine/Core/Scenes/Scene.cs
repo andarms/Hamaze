@@ -1,0 +1,125 @@
+using System.Collections.Generic;
+using Hamaze.Engine.Graphics;
+using Microsoft.Xna.Framework.Content;
+
+namespace Hamaze.Engine.Core.Scenes;
+
+public class Scene
+{
+    protected readonly Dictionary<string, ObjectLayer> layers = [];
+    protected readonly List<string> sortedLayers = [];
+    public const string DefaultLayerName = "Default";
+
+    public bool IsActive { get; protected set; } = true;
+    public bool IsPaused { get; protected set; } = false;
+
+    public Scene()
+    {
+        ObjectLayer defaultLayer = new(DefaultLayerName);
+        layers.Add(defaultLayer.Name, defaultLayer);
+        sortedLayers.Add(defaultLayer.Name);
+    }
+
+    #region Child Management
+    public void AddChild(GameObject child, string layerName = DefaultLayerName)
+    {
+        if (!layers.TryGetValue(layerName, out ObjectLayer? layer))
+        {
+            layer = new ObjectLayer(layerName);
+            layers[layerName] = layer;
+            sortedLayers.Add(layerName);
+            sortedLayers.Sort((a, b) => layers[a].Priority.CompareTo(layers[b].Priority));
+        }
+        child.Initialize();
+        layer.Instances.Add(child);
+    }
+
+    public void RemoveChild(GameObject child, string layerName = DefaultLayerName)
+    {
+        if (layers.TryGetValue(layerName, out ObjectLayer? value))
+        {
+            value.Instances.Remove(child);
+        }
+    }
+
+    public void AddLayer(string layerName, LayerPriority priority = LayerPriority.Default)
+    {
+        if (!layers.ContainsKey(layerName))
+        {
+            ObjectLayer newLayer = new(layerName) { Priority = priority };
+            layers.Add(layerName, newLayer);
+            sortedLayers.Add(layerName);
+            sortedLayers.Sort((a, b) => layers[a].Priority.CompareTo(layers[b].Priority));
+        }
+    }
+
+    public void RemoveLayer(string layerName)
+    {
+        if (layers.TryGetValue(layerName, out ObjectLayer? value))
+        {
+            value.Dispose();
+            layers.Remove(layerName);
+            sortedLayers.Remove(layerName);
+        }
+    }
+    #endregion
+
+    public virtual void Initialize()
+    {
+        foreach (var layer in layers.Values)
+        {
+            layer.Initialize();
+        }
+    }
+
+    public virtual void LoadContent(ContentManager content) { }
+
+    public virtual void OnEnter()
+    {
+        IsActive = true;
+        IsPaused = false;
+    }
+
+    public virtual void OnExit()
+    {
+        IsActive = false;
+    }
+
+    public virtual void OnPause()
+    {
+        IsPaused = true;
+    }
+
+    public virtual void OnResume()
+    {
+        IsPaused = false;
+    }
+
+    public virtual void Update(float dt)
+    {
+        if (!IsActive || IsPaused) return;
+        foreach (var layer in layers.Values)
+        {
+            layer.Update(dt);
+        }
+    }
+
+    public virtual void Draw(Renderer renderer)
+    {
+        if (!IsActive) return;
+        foreach (var layerName in sortedLayers)
+        {
+            layers[layerName].Draw(renderer);
+        }
+    }
+
+    public virtual void Dispose()
+    {
+        foreach (var layer in layers.Values)
+        {
+            layer.Dispose();
+        }
+        layers.Clear();
+        IsActive = false;
+    }
+}
