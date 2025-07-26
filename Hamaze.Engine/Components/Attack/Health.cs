@@ -9,6 +9,7 @@ public class Health(int current, int max)
   public int Max { get; private set; } = max;
   public bool IsDead => Current <= 0;
   public Signal Dead { get; } = new();
+  public Signal<int> HealthChanged { get; } = new();
 
   public void TakeDamage(int amount)
   {
@@ -20,6 +21,7 @@ public class Health(int current, int max)
       Current = 0;
       Dead.Emit();
     }
+    HealthChanged.Emit(Current);
     Console.WriteLine($"Health: {Current}/{Max}");
   }
 

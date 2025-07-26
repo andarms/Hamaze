@@ -1,5 +1,7 @@
+
 using Hamaze.Arpg.Content;
 using Hamaze.Engine.Components.Attack;
+using Hamaze.Engine.Components.UI;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
@@ -35,5 +37,17 @@ public class Player : DynamicObject
     Health health = new(100, 100);
     Hurtbox hurtbox = new(health);
     AddChild(hurtbox);
+    Label healthLabel = new($"Health: {health.Current}/{health.Max}")
+    {
+      Position = new Vector2(0, -24),
+    };
+    health.HealthChanged.Connect((currentHealth) =>
+    {
+      healthLabel.Text = $"Health: {currentHealth}/{health.Max}";
+    });
+
+
+
+    AddChild(healthLabel);
   }
 }

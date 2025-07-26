@@ -15,13 +15,17 @@ public class NoDamage : IDamageCalculator
 
 public class SimpleDamage(int amount) : IDamageCalculator
 {
-  public float CriticalChance { get; set; } = 0.05f;
+  public float CriticalChance { get; set; } = 0.01f;
   public float CriticalMultiplier { get; set; } = 1.5f;
+
+  private float currentCriticalChance = 0f;
 
   public int CalculateDamage()
   {
-    if (Random.Shared.NextDouble() < CriticalChance)
+    currentCriticalChance += CriticalChance;
+    if (Random.Shared.NextDouble() < currentCriticalChance)
     {
+      currentCriticalChance = 0f;
       Console.WriteLine("Critical Hit!");
       return (int)(amount * CriticalMultiplier);
     }

@@ -10,6 +10,7 @@ public class Renderer(GraphicsDevice graphicsDevice, ContentManager content)
 {
   public readonly ShapeBatch Shapes = new(graphicsDevice, content);
   private readonly SpriteBatch Batch = new(graphicsDevice);
+  private readonly SpriteFont DefaultFont = content.Load<SpriteFont>("Fonts/Default");
 
 
   public const int ScaleFactor = 4;
@@ -43,6 +44,16 @@ public class Renderer(GraphicsDevice graphicsDevice, ContentManager content)
       SpriteEffects.None,
       0f
     );
+  }
+
+  public void DrawText(string text, Vector2 position, Color color)
+  {
+    Batch.DrawString(DefaultFont, text, position * ScaleFactor, color);
+  }
+
+  public void DrawText(string text, Vector2 position, Color color, float rotation, Vector2 origin, float scale)
+  {
+    Batch.DrawString(DefaultFont, text, position, color, rotation, origin, scale, SpriteEffects.None, 0f);
   }
 
   public void End()
