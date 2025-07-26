@@ -47,11 +47,11 @@ public class GameplayScene : Scene
         };
         AddChild(box2);
 
-        Box box3 = new()
+        Spikes spikes = new()
         {
             Position = new Vector2(300, 150)
         };
-        AddChild(box3);
+        AddChild(spikes);
 
 
         TriggerZone zone = new() { Position = new Vector2(500, 100), };

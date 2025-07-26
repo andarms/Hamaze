@@ -1,4 +1,5 @@
 using Hamaze.Arpg.Content;
+using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
@@ -30,5 +31,9 @@ public class Player : DynamicObject
 
     WobbleMovementAnimation wobbleAnimation = new(sprite, this);
     AddChild(wobbleAnimation);
+
+    Health health = new(100, 100);
+    Hurtbox hurtbox = new(health);
+    AddChild(hurtbox);
   }
 }
