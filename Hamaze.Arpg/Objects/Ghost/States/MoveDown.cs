@@ -1,6 +1,6 @@
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Events;
-using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost.States;
@@ -13,7 +13,8 @@ public class MoveDown(DynamicObject ghost) : State
     public override void Update(float dt)
     {
         base.Update(dt);
-        ghost.Velocity = new Vector2(0, 1) * Speed;
+        var velocity = new Vector2(0, Speed * dt);
+        ghost.Move(velocity);
 
         if (ghost.Position.Y >= 500)
         {

@@ -1,12 +1,13 @@
 using System;
 using Hamaze.Arpg.Content;
+using Hamaze.Engine.Collisions;
+using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
-using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
 
-public class Box : SolidObject
+public class Box : GameObject
 {
     public Box()
     {
@@ -21,13 +22,9 @@ public class Box : SolidObject
         AddChild(sprite);
 
         Vector2 size = new Vector2(16) * Renderer.ScaleFactor;
-        Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
-        AddChild(collider);
-
-        OnCollisionStay.Connect(collision =>
-        {
-            Console.WriteLine($"Box collided with {collision.ObjectB.Name}");
-            CollisionResponse.Stop(collision);
-        });
+        Collider = new(
+            offset: new Vector2(0, 0),
+            size: size
+        );
     }
 }

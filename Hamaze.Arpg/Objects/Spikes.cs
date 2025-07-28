@@ -3,7 +3,6 @@ using Hamaze.Arpg.Content;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
-using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
@@ -22,11 +21,13 @@ public class Spikes : GameObject
     };
     AddChild(sprite);
 
-    Hitbox hitbox = new() { Damage = new SimpleDamage(10) };
-    AddChild(hitbox);
+    // Hitbox hitbox = new() { Damage = new SimpleDamage(10) };
+    // AddChild(hitbox);
     Vector2 size = new Vector2(16) * Renderer.ScaleFactor;
-    Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
-    AddChild(collider);
+    Collider = new(
+      offset: new Vector2(0, 0),
+      size: size
+    );
 
   }
 }

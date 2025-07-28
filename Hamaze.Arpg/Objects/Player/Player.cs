@@ -1,9 +1,10 @@
 
+
 using Hamaze.Arpg.Content;
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
 using Hamaze.Engine.Graphics;
-using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
@@ -22,15 +23,16 @@ public class Player : DynamicObject
     Animations = new(sheet);
     AddChild(Animations);
 
-    Vector2 size = new Vector2(16, 16) * Renderer.ScaleFactor;
-    Collider collider = new(new(0, 0, (int)size.X, (int)size.Y));
-    AddChild(collider);
+    Collider = new Collider(
+      offset: new Vector2(0, 0),
+      size: new Vector2(64)
+    );
 
     Movement movement = new(player: this) { };
     AddChild(movement);
 
-    Hurtbox hurtbox = new(Health);
-    AddChild(hurtbox);
+    // Hurtbox hurtbox = new(Health);
+    // AddChild(hurtbox);
     Label healthLabel = new(Health.ToString())
     {
       Position = new Vector2(0, -24),

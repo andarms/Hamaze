@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
@@ -9,9 +10,19 @@ public class GameObject : IDisposable
 {
   public string Name { get; set; } = "Game Object";
   public Vector2 Position { get; set; } = Vector2.Zero;
-
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
+  public Collider? Collider { get; set; }
+
+  public Rectangle Bounds => GetColliderBounds();
+
+  private Rectangle GetColliderBounds()
+  {
+    if (Collider == null) return Rectangle.Empty;
+    var offset = Collider.Offset;
+    var size = Collider.Size;
+    return new Rectangle((int)(Position.X + offset.X), (int)(Position.Y + offset.Y), (int)size.X, (int)size.Y);
+  }
 
   public Vector2 GlobalPosition
   {
@@ -45,7 +56,7 @@ public class GameObject : IDisposable
   }
   #endregion
 
-  #region  Licecycle Methods
+  #region  Lifecycle Methods
   public virtual void Initialize()
   {
     Children.ForEach(c => c.Initialize());

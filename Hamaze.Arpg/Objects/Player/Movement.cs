@@ -54,6 +54,7 @@ public class Movement(Player player) : GameObject
     }
 
     player.Animations.SetAnimation(animationType, animationDirection);
-    player.Velocity = direction * currentSpeed;
+    var velocity = direction * currentSpeed * dt;
+    player.Move(velocity);
   }
 }

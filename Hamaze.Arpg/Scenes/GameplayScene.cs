@@ -2,9 +2,9 @@ using System;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Player;
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
-using Hamaze.Engine.Physics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Scenes;
@@ -19,7 +19,7 @@ public class GameplayScene : Scene
     public override void Initialize()
     {
 
-        PhysicsWorld.Initialize();
+        CollisionsManager.Initialize();
         AddLayer("Background", LayerPriority.Background);
 
         player = new Player
@@ -41,7 +41,7 @@ public class GameplayScene : Scene
         };
         AddChild(box);
 
-        // Add more boxes to test collision
+        // Add more boxes to test collisiongam
         Box box2 = new()
         {
             Position = new Vector2(400, 200)
@@ -55,17 +55,17 @@ public class GameplayScene : Scene
         AddChild(spikes, "Background");
 
 
-        TriggerZone zone = new() { Position = new Vector2(500, 100), };
-        Collider collider = new(63, 128) { };
-        zone.AddChild(collider);
-        AddChild(zone);
-        zone.OnCollisionEnter.Connect(_ => player.Health.Heal(10));
+        // TriggerZone zone = new() { Position = new Vector2(500, 100), };
+        // Collider collider = new(63, 128) { };
+        // zone.AddChild(collider);
+        // AddChild(zone);
+        // zone.OnCollisionEnter.Connect(_ => player.Health.Heal(10));
     }
 
     public override void Update(float dt)
     {
         base.Update(dt);
-        PhysicsWorld.Update(dt);
+        CollisionsManager.Update(dt);
     }
 
     public override void Draw(Renderer renderer)
