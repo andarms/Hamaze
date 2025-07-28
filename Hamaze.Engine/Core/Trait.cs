@@ -4,4 +4,7 @@ namespace Hamaze.Engine.Core;
 // Traits are lightweight data containers that define the state or identity of a game object.
 // They do not contain logic, they're purely declarative and can be added or removed dynamically at runtime.
 // </summary>
-public record Trait(string Name) { }
+public class Trait(string name)
+{
+  public string Name { get; init; } = name;
+}

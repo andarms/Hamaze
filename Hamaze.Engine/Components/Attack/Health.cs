@@ -1,13 +1,13 @@
 using System;
+using Hamaze.Engine.Core;
 using Hamaze.Engine.Events;
 
 namespace Hamaze.Engine.Components.Attack;
 
-public class Health(int current, int max)
+
+public class Health(int current, int max) : Trait("Health")
 {
-  public int Current { get; private set; } = current;
-  public int Max { get; private set; } = max;
-  public bool IsDead => Current <= 0;
+  public bool IsDead => current <= 0;
   public Signal Dead { get; } = new();
   public Signal<int> HealthChanged { get; } = new();
 
@@ -15,27 +15,27 @@ public class Health(int current, int max)
   {
     if (IsDead) return;
 
-    Current -= amount;
-    if (Current < 0)
+    current -= amount;
+    if (current < 0)
     {
-      Current = 0;
+      current = 0;
       Dead.Emit();
     }
-    HealthChanged.Emit(Current);
-    Console.WriteLine($"Health: {Current}/{Max}");
+    HealthChanged.Emit(current);
+    Console.WriteLine($"Health: {current}/{max}");
   }
 
   public void Heal(int amount)
   {
     if (IsDead) return;
 
-    Current += amount;
-    if (Current > Max) { Current = Max; }
-    HealthChanged.Emit(Current);
+    current += amount;
+    if (current > max) { current = max; }
+    HealthChanged.Emit(current);
   }
 
   public override string ToString()
   {
-    return $"Health: {Current}/{Max}";
+    return $"Health: {current}/{max}";
   }
 }

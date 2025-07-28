@@ -23,7 +23,7 @@ public class GameObject : IDisposable
     if (Collider == null) return Rectangle.Empty;
     var offset = Collider.Offset;
     var size = Collider.Size;
-    return new Rectangle((int)(Position.X + offset.X), (int)(Position.Y + offset.Y), (int)size.X, (int)size.Y);
+    return new Rectangle((int)(GlobalPosition.X + offset.X), (int)(GlobalPosition.Y + offset.Y), (int)size.X, (int)size.Y);
   }
 
   public Vector2 GlobalPosition

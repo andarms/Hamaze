@@ -1,5 +1,5 @@
 namespace Hamaze.Engine.Core;
 
-public record Solid() : Trait("Solid") { }
+public class Solid() : Trait("Solid") { }
 
 

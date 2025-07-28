@@ -4,10 +4,13 @@ using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
+using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
+
+public class PlayerTrait() : Trait("Player") { }
 
 public class Player : DynamicObject
 {
@@ -31,8 +34,12 @@ public class Player : DynamicObject
     Movement movement = new(player: this) { Speed = 150f };
     AddChild(movement);
 
-    // Hurtbox hurtbox = new(Health);
-    // AddChild(hurtbox);
+    Hurtbox hurtbox = new(Health)
+    {
+      Collider = Collider
+    };
+    AddChild(hurtbox);
+
     Label healthLabel = new(Health.ToString())
     {
       Position = new Vector2(0, -24),
@@ -46,5 +53,9 @@ public class Player : DynamicObject
     });
 
     AddChild(healthLabel);
+
+    Traits.Add(new PlayerTrait());
+    Traits.Add(new Solid());
+    Traits.Add(Health);
   }
 }

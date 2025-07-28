@@ -1,22 +1,33 @@
-// using Hamaze.Engine.Physics;
 
-// namespace Hamaze.Engine.Components.Attack;
 
-// public class Hurtbox(Health health) : TriggerZone
-// {
-//   public override void Initialize()
-//   {
-//     base.Initialize();
-//     OnCollisionEnter.Connect(HandleCollision);
-//   }
+using System;
+using Hamaze.Engine.Collisions;
+using Hamaze.Engine.Core;
 
-//   private void HandleCollision(Collision collision)
-//   {
-//     if (collision.Other is Hitbox hitbox)
-//     {
-//       health.TakeDamage(hitbox.Damage.CalculateDamage());
-//     }
-//   }
-// }
+namespace Hamaze.Engine.Components.Attack;
+
+public class Hurtbox : GameObject
+{
+  private readonly Health health;
+
+  public Hurtbox(Health health)
+  {
+    this.health = health;
+
+    TriggerZone zone = new();
+    zone.OnEnter.Connect(HandleCollision);
+    Traits.Add(zone);
+
+    CollisionsManager.AddObject(this);
+  }
+
+  private void HandleCollision(GameObject other)
+  {
+    if (other is Hitbox hitbox)
+    {
+      health.TakeDamage(hitbox.Damage.CalculateDamage());
+    }
+  }
+}
 
 

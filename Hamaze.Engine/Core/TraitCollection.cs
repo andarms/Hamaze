@@ -14,6 +14,17 @@ public class TraitCollection : HashSet<Trait>
   {
     return this.Any(t => t.Name == name);
   }
+
+  public T? Get<T>() where T : Trait
+  {
+    return this.FirstOrDefault(t => t is T) as T;
+  }
+
+  public Trait? Get(string name)
+  {
+    return this.FirstOrDefault(t => t.Name == name);
+  }
+
 }
 
 

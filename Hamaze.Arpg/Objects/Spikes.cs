@@ -10,6 +10,7 @@ namespace Hamaze.Arpg.Objects;
 
 public class Spikes : GameObject
 {
+  IDamageCalculator damage = new SimpleDamage(10);
   public Spikes()
   {
     Name = "Spikes";
@@ -22,26 +23,16 @@ public class Spikes : GameObject
     };
     AddChild(sprite);
 
-    // Hitbox hitbox = new() { Damage = new SimpleDamage(10) };
-    // AddChild(hitbox);
     Vector2 size = new Vector2(16) * Renderer.ScaleFactor;
-    Collider = new(
-      offset: new Vector2(0, 0),
-      size: size
-    );
-    CollisionsManager.AddObject(this);
 
-    TriggerZone zone = new();
-    zone.OnEnter.Connect(OnEnter);
-    Traits.Add(zone);
-  }
-
-  private void OnEnter(GameObject obj)
-  {
-
-    if (obj is Player.Player player)
+    Hitbox hitbox = new()
     {
-      player.Health.TakeDamage(10);
-    }
+      Damage = new SimpleDamage(10),
+      Collider = new(
+        offset: new Vector2(0, 0),
+        size: size
+      )
+    };
+    AddChild(hitbox);
   }
 }
