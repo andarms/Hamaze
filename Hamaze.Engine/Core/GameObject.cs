@@ -12,9 +12,11 @@ public class GameObject : IDisposable
   public Vector2 Position { get; set; } = Vector2.Zero;
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
-  public Collider? Collider { get; set; }
+  public TraitCollection Traits { get; } = [];
 
+  public Collider? Collider { get; set; }
   public Rectangle Bounds => GetColliderBounds();
+  public List<GameObject> Collisions { get; } = [];
 
   private Rectangle GetColliderBounds()
   {

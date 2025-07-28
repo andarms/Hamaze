@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Hamaze.Engine.Core;
 using Microsoft.Xna.Framework;
 
@@ -42,6 +44,49 @@ public static class CollisionsManager
   public static void Update(float dt)
   {
     UpdateGrid();
+    CheckCollisions();
+  }
+
+  /// <summary>
+  /// Process collision enter/stay/exit events for all objects using spatial grid
+  /// </summary>
+  private static void CheckCollisions()
+  {
+
+    var checkedPairs = new HashSet<(GameObject, GameObject)>();
+    foreach (var objA in objects)
+    {
+      foreach (var objB in Grid.GetPotentialCollisions(objA))
+      {
+        var pair = objA.GetHashCode() < objB.GetHashCode() ? (objA, objB) : (objB, objA);
+        if (checkedPairs.Contains(pair)) { continue; }
+        checkedPairs.Add(pair);
+
+        bool wasColliding = objA.Collisions.Contains(objB);
+        bool isColliding = objA.Bounds.Intersects(objB.Bounds);
+
+        TriggerZone? zoneA = objA.Traits.OfType<TriggerZone>().FirstOrDefault();
+        TriggerZone? zoneB = objB.Traits.OfType<TriggerZone>().FirstOrDefault();
+
+        if (isColliding && !wasColliding)
+        {
+          objA.Collisions.Add(objB);
+          objB.Collisions.Add(objA);
+
+          zoneA?.OnEnter.Emit(objB);
+          zoneB?.OnEnter.Emit(objA);
+        }
+        else if (!isColliding && wasColliding)
+        {
+          objA.Collisions.Remove(objB);
+          objB.Collisions.Remove(objA);
+          zoneA?.OnExit.Emit(objB);
+          zoneB?.OnExit.Emit(objA);
+        }
+      }
+    }
+
+
   }
 
   private static void UpdateGrid()
@@ -75,34 +120,42 @@ public static class CollisionsManager
     }
   }
 
-  public static void ResolveSolidCollision(GameObject obj, GameObject solid, bool resolveX, bool resolveY)
+  public static void ResolveSolidCollision(GameObject obj, GameObject other, bool resolveX, bool resolveY)
   {
-    if (obj.Collider == null || solid.Collider == null) return;
+    if (other.Traits.Has<Solid>())
+    {
+      StopObject(obj, other, resolveX, resolveY);
+    }
+  }
+
+  private static void StopObject(GameObject obj, GameObject other, bool resolveX, bool resolveY)
+  {
+    if (obj.Collider == null || other.Collider == null) return;
     if (resolveX)
     {
-      if (obj.Position.X < solid.Position.X)
+      if (obj.Position.X < other.Position.X)
       {
         // Object is to the left, push it left
-        obj.Position = new Vector2(solid.Position.X - obj.Collider.Size.X - obj.Collider.Offset.X, obj.Position.Y);
+        obj.Position = new Vector2(other.Position.X - obj.Collider.Size.X - obj.Collider.Offset.X, obj.Position.Y);
       }
       else
       {
         // Object is to the right, push it right
-        obj.Position = new Vector2(solid.Position.X + solid.Collider.Size.X - obj.Collider.Offset.X, obj.Position.Y);
+        obj.Position = new Vector2(other.Position.X + other.Collider.Size.X - obj.Collider.Offset.X, obj.Position.Y);
       }
     }
 
     if (resolveY)
     {
-      if (obj.Position.Y < solid.Position.Y)
+      if (obj.Position.Y < other.Position.Y)
       {
         // Object is above, push it up
-        obj.Position = new Vector2(obj.Position.X, solid.Position.Y - obj.Collider.Size.Y - obj.Collider.Offset.Y);
+        obj.Position = new Vector2(obj.Position.X, other.Position.Y - obj.Collider.Size.Y - obj.Collider.Offset.Y);
       }
       else
       {
         // Object is below, push it down
-        obj.Position = new Vector2(obj.Position.X, solid.Position.Y + solid.Collider.Size.Y - obj.Collider.Offset.Y);
+        obj.Position = new Vector2(obj.Position.X, other.Position.Y + other.Collider.Size.Y - obj.Collider.Offset.Y);
       }
     }
   }

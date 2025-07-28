@@ -19,13 +19,11 @@ public class DynamicObject : GameObject
     Position = new Vector2(Position.X + movement.X, Position.Y);
     foreach (var collision in CollisionsManager.GetPotentialCollisions(this))
     {
-      Console.WriteLine($"DynamicObject collided with {collision.Name}");
       CollisionsManager.ResolveSolidCollision(this, collision, true, false);
     }
     Position = new Vector2(Position.X, Position.Y + movement.Y);
     foreach (var collision in CollisionsManager.GetPotentialCollisions(this))
     {
-      Console.WriteLine($"DynamicObject collided with {collision.Name}");
       CollisionsManager.ResolveSolidCollision(this, collision, false, true);
     }
   }

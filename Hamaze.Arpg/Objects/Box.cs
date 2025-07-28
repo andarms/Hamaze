@@ -26,5 +26,8 @@ public class Box : GameObject
             offset: new Vector2(0, 0),
             size: size
         );
+        CollisionsManager.AddObject(this);
+        Traits.Add(new Solid());
+
     }
 }

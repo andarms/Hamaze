@@ -1,5 +1,6 @@
 using System;
 using Hamaze.Arpg.Content;
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
@@ -28,6 +29,19 @@ public class Spikes : GameObject
       offset: new Vector2(0, 0),
       size: size
     );
+    CollisionsManager.AddObject(this);
 
+    TriggerZone zone = new();
+    zone.OnEnter.Connect(OnEnter);
+    Traits.Add(zone);
+  }
+
+  private void OnEnter(GameObject obj)
+  {
+
+    if (obj is Player.Player player)
+    {
+      player.Health.TakeDamage(10);
+    }
   }
 }

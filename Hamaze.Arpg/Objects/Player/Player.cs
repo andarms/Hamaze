@@ -28,7 +28,7 @@ public class Player : DynamicObject
       size: new Vector2(64)
     );
 
-    Movement movement = new(player: this) { };
+    Movement movement = new(player: this) { Speed = 150f };
     AddChild(movement);
 
     // Hurtbox hurtbox = new(Health);

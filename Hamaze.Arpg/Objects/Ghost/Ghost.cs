@@ -39,6 +39,8 @@ public class Ghost : DynamicObject
 
         machine.SetInitialState<MoveDown>();
         AddChild(machine);
+
+        Traits.Add(new Solid());
         // WobbleMovementAnimation wobbleAnimation = new(sprite, this);
         // AddChild(wobbleAnimation);
     }
