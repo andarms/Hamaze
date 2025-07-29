@@ -25,6 +25,15 @@ public class TraitCollection : HashSet<Trait>
     return this.FirstOrDefault(t => t.Name == name);
   }
 
+  public void Remove<T>() where T : Trait
+  {
+    var trait = this.FirstOrDefault(t => t is T);
+    if (trait != null)
+    {
+      Remove(trait);
+    }
+  }
+
 }
 
 

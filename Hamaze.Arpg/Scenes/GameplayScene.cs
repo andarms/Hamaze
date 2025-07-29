@@ -55,11 +55,8 @@ public class GameplayScene : Scene
         AddChild(spikes, "Background");
 
 
-        // TriggerZone zone = new() { Position = new Vector2(500, 100), };
-        // Collider collider = new(63, 128) { };
-        // zone.AddChild(collider);
-        // AddChild(zone);
-        // zone.OnCollisionEnter.Connect(_ => player.Health.Heal(10));
+        HealingZone healingZone = new() { Position = new Vector2(500, 100), };
+        AddChild(healingZone);
     }
 
     public override void Update(float dt)

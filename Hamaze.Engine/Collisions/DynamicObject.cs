@@ -27,17 +27,4 @@ public class DynamicObject : GameObject
       CollisionsManager.ResolveSolidCollision(this, collision, false, true);
     }
   }
-
-  public override void Draw(Renderer renderer)
-  {
-    base.Draw(renderer);
-    if (Collider == null) return;
-    renderer.Shapes.DrawRectangle(
-      xy: Position,
-      size: Collider.Size,
-      c1: new Color(0, 0, 0, 100),
-      c2: Color.Red,
-      thickness: 2
-    );
-  }
 }

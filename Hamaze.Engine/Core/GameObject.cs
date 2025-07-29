@@ -15,6 +15,7 @@ public class GameObject : IDisposable
   public TraitCollection Traits { get; } = [];
 
   public Collider? Collider { get; set; }
+
   public Rectangle Bounds => GetColliderBounds();
   public List<GameObject> Collisions { get; } = [];
 
@@ -72,6 +73,21 @@ public class GameObject : IDisposable
   public virtual void Draw(Renderer renderer)
   {
     Children.ForEach(c => c.Draw(renderer));
+    Debug(renderer);
+
+  }
+
+  private void Debug(Renderer renderer)
+  {
+    if (Collider == null) return;
+    renderer.Shapes.DrawRectangle(
+      xy: GlobalPosition + Collider.Offset,
+      size: Collider.Size,
+      c1: new Color(0, 0, 0, 100),
+      c2: Color.Red,
+      thickness: 2
+    );
+
   }
 
   public virtual void Dispose()
