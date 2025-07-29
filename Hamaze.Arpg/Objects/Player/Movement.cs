@@ -55,6 +55,14 @@ public class Movement(Player player) : GameObject
 
     player.Animations.SetAnimation(animationType, animationDirection);
     var velocity = direction * currentSpeed * dt;
+    player.FacingDirection = lastDirection switch
+    {
+      AnimationController.Direction.Up => Vector2.UnitY * -1,
+      AnimationController.Direction.Down => Vector2.UnitY,
+      AnimationController.Direction.Left => Vector2.UnitX * -1,
+      AnimationController.Direction.Right => Vector2.UnitX,
+      _ => Vector2.Zero
+    };
     player.Move(velocity);
   }
 }

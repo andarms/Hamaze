@@ -183,6 +183,7 @@ public class InputMap
                 .WithGamepadButton(Buttons.Back)
             .AddAction("confirm")
                 .WithKey(Keys.Enter)
+                .WithKey(Keys.Space)
                 .WithGamepadButton(Buttons.A)
             .AddAction("cancel")
                 .WithKey(Keys.Escape)

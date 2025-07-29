@@ -27,7 +27,16 @@ public class Box : GameObject
             size: size
         );
         CollisionsManager.AddObject(this);
+
+
+        Interactable interactable = new();
+        interactable.OnInteraction.Connect(() =>
+        {
+            Console.WriteLine($"Interacted with {Name}");
+        });
+
         Traits.Add(new Solid());
+        Traits.Add(interactable);
 
     }
 }

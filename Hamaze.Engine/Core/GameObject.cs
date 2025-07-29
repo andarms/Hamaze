@@ -83,8 +83,8 @@ public class GameObject : IDisposable
     renderer.Shapes.DrawRectangle(
       xy: GlobalPosition + Collider.Offset,
       size: Collider.Size,
-      c1: new Color(0, 0, 0, 100),
-      c2: Color.Red,
+      c1: Collider.DebugColor,
+      c2: Collider.DebugOutlineColor,
       thickness: 2
     );
 

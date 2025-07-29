@@ -16,10 +16,17 @@ public class Player : DynamicObject
 {
   public Health Health = new(100, 100);
   public AnimationController Animations { get; private set; }
+  public Vector2 FacingDirection { get; set; } = Vector2.Zero;
 
   public Player()
   {
     Name = "Player";
+    AddComponents();
+    AddTraits();
+  }
+
+  private void AddComponents()
+  {
     SpriteSheet sheet = new(AssetsManager.Boy, 16, 16);
     AddChild(sheet);
 
@@ -54,6 +61,12 @@ public class Player : DynamicObject
 
     AddChild(healthLabel);
 
+    Interaction interaction = new(this);
+    AddChild(interaction);
+  }
+
+  private void AddTraits()
+  {
     Traits.Add(new PlayerTrait());
     Traits.Add(new Solid());
     Traits.Add(Health);
