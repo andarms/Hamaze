@@ -55,6 +55,12 @@ public class GameplayScene : Scene
         AddChild(spikes, "Background");
 
 
+        Sing sing = new("Hello, world!")
+        {
+            Position = new Vector2(400, 400)
+        };
+        AddChild(sing);
+
         HealingZone healingZone = new() { Position = new Vector2(500, 100), };
         AddChild(healingZone);
     }

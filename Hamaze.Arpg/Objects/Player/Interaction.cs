@@ -35,6 +35,14 @@ public class Interaction : GameObject
     }
   }
 
+  private void UpdatePosition()
+  {
+    var playerCenter = player.Collider.Offset + player.Collider.Size * 0.5f;
+    // Calculate the offset in the facing direction, placing the interaction area just outside the player
+    var facingOffset = player.FacingDirection.ToVector2() * (player.Collider.Size.Y * 0.5f + size.Y * 0.5f);
+    Position = playerCenter + facingOffset - size * 0.5f;
+  }
+
   private void ProcessInteraction()
   {
     var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.Traits.Has<Interactable>());
@@ -51,11 +59,4 @@ public class Interaction : GameObject
 
   }
 
-  private void UpdatePosition()
-  {
-    var playerCenter = player.Collider.Offset + player.Collider.Size * 0.5f;
-    // Calculate the offset in the facing direction, placing the interaction area just outside the player
-    var facingOffset = player.FacingDirection.ToVector2() * (player.Collider.Size.Y * 0.5f + size.Y * 0.5f);
-    Position = playerCenter + facingOffset - size * 0.5f;
-  }
 }
