@@ -16,7 +16,7 @@ public class Player : DynamicObject
 {
   public Health Health = new(100, 100);
   public AnimationController Animations { get; private set; }
-  public Vector2 FacingDirection { get; set; } = Vector2.Zero;
+  public Directions FacingDirection { get; set; } = Directions.Down;
 
   public Player()
   {
@@ -27,7 +27,7 @@ public class Player : DynamicObject
 
   private void AddComponents()
   {
-    SpriteSheet sheet = new(AssetsManager.Boy, 16, 16);
+    SpriteSheet sheet = new(AssetsManager.NinjaGreen, 16, 16);
     AddChild(sheet);
 
     Animations = new(sheet);

@@ -5,14 +5,6 @@ namespace Hamaze.Arpg.Objects.Player;
 
 public class AnimationController(SpriteSheet sheet) : GameObject
 {
-  public enum Direction
-  {
-    Down,
-    Up,
-    Left,
-    Right
-  }
-
   public enum AnimationType
   {
     Idle,
@@ -44,27 +36,27 @@ public class AnimationController(SpriteSheet sheet) : GameObject
     currentAnimation.Update(dt);
   }
 
-  public void SetAnimation(AnimationType type, Direction direction)
+  public void SetAnimation(AnimationType type, Directions direction)
   {
     switch (type)
     {
       case AnimationType.Walk:
         currentAnimation = direction switch
         {
-          Direction.Down => WalkDown,
-          Direction.Up => WalkUp,
-          Direction.Left => WalkLeft,
-          Direction.Right => WalkRight,
+          Directions.Down => WalkDown,
+          Directions.Up => WalkUp,
+          Directions.Left => WalkLeft,
+          Directions.Right => WalkRight,
           _ => currentAnimation
         };
         break;
       case AnimationType.Idle:
         currentAnimation = direction switch
         {
-          Direction.Down => IdleDown,
-          Direction.Up => IdleUp,
-          Direction.Left => IdleLeft,
-          Direction.Right => IdleRight,
+          Directions.Down => IdleDown,
+          Directions.Up => IdleUp,
+          Directions.Left => IdleLeft,
+          Directions.Right => IdleRight,
           _ => currentAnimation
         };
         break;

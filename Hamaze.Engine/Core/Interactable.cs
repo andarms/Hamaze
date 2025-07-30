@@ -5,4 +5,5 @@ namespace Hamaze.Engine.Core;
 public class Interactable() : Trait("Interactable")
 {
   public Signal OnInteraction { get; } = new();
+  public Directions? Side { get; set; } = null;
 }

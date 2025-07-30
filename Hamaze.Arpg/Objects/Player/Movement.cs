@@ -10,8 +10,8 @@ public class Movement(Player player) : GameObject
 {
   public float Speed { get; set; } = 100;
 
-  AnimationController.Direction animationDirection = AnimationController.Direction.Down;
-  AnimationController.Direction lastDirection = AnimationController.Direction.Down;
+  Directions animationDirection = Directions.Down;
+  Directions lastDirection = Directions.Down;
   AnimationController.AnimationType animationType = AnimationController.AnimationType.Idle;
 
   public override void Update(float dt)
@@ -30,12 +30,12 @@ public class Movement(Player player) : GameObject
     {
       if (direction.Y != 0)
       {
-        animationDirection = direction.Y > 0 ? AnimationController.Direction.Down : AnimationController.Direction.Up;
+        animationDirection = direction.Y > 0 ? Directions.Down : Directions.Up;
       }
       if (direction.X != 0)
       {
 
-        animationDirection = direction.X > 0 ? AnimationController.Direction.Right : AnimationController.Direction.Left;
+        animationDirection = direction.X > 0 ? Directions.Right : Directions.Left;
       }
       lastDirection = animationDirection;
       animationType = AnimationController.AnimationType.Walk;
@@ -55,14 +55,7 @@ public class Movement(Player player) : GameObject
 
     player.Animations.SetAnimation(animationType, animationDirection);
     var velocity = direction * currentSpeed * dt;
-    player.FacingDirection = lastDirection switch
-    {
-      AnimationController.Direction.Up => Vector2.UnitY * -1,
-      AnimationController.Direction.Down => Vector2.UnitY,
-      AnimationController.Direction.Left => Vector2.UnitX * -1,
-      AnimationController.Direction.Right => Vector2.UnitX,
-      _ => Vector2.Zero
-    };
+    player.FacingDirection = lastDirection;
     player.Move(velocity);
   }
 }

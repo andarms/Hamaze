@@ -9,7 +9,10 @@ namespace Hamaze.Arpg.Objects;
 
 public class Chest : GameObject
 {
-  public string Name { get; set; }
+  public Rectangle OpenSource { get; private set; } = new Rectangle(112, 0, 16, 16);
+  public Rectangle ClosedSource { get; private set; } = new Rectangle(96, 0, 16, 16);
+
+  public bool IsOpen { get; private set; } = false;
 
   public Chest()
   {
@@ -30,14 +33,16 @@ public class Chest : GameObject
       Position = Position,
       Origin = new Vector2(8, 16),
       Color = Color.White,
-      Source = new Rectangle(96, 0, 16, 16)
+      Source = ClosedSource
     };
     AddChild(sprite);
 
-    Interactable interactable = new();
+    Interactable interactable = new() { Side = Directions.Down };
     interactable.OnInteraction.Connect(() =>
     {
-      Console.WriteLine($"{Name} interacted with!");
+      IsOpen = !IsOpen;
+      sprite.Source = IsOpen ? OpenSource : ClosedSource;
+      Traits.Remove<Interactable>();
     });
     Traits.Add(interactable);
     Traits.Add(new Solid());

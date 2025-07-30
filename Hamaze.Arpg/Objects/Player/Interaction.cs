@@ -28,16 +28,31 @@ public class Interaction : GameObject
   public override void Update(float dt)
   {
     base.Update(dt);
-
-    // Place the interaction area at half of the player's size in the facing direction
-    var playerCenter = player.Collider.Size * 0.5f;
-    var offset = player.FacingDirection * (player.Collider.Size) + player.Collider.Offset;
-    Position = playerCenter + offset - size * 0.5f;
-
+    UpdatePosition();
     if (InputManager.IsActionJustPressed("confirm"))
     {
-      var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.Traits.Has<Interactable>());
-      hit?.Traits.Get<Interactable>()?.OnInteraction.Emit();
+      ProcessInteraction();
     }
+  }
+
+  private void ProcessInteraction()
+  {
+    var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.Traits.Has<Interactable>());
+    if (hit == null) return;
+
+    Interactable interactable = hit.Traits.Get<Interactable>();
+    if (interactable == null) return;
+
+    if (interactable.Side != player.FacingDirection.Inverse()) { return; }
+
+    interactable.OnInteraction.Emit();
+
+  }
+
+  private void UpdatePosition()
+  {
+    var playerCenter = player.Collider.Size * 0.5f;
+    var offset = player.FacingDirection.ToVector2() * player.Collider.Size + player.Collider.Offset;
+    Position = playerCenter + offset - size * 0.5f;
   }
 }
