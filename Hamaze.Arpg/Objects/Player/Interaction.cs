@@ -43,7 +43,7 @@ public class Interaction : GameObject
     Interactable interactable = hit.Traits.Get<Interactable>();
     if (interactable == null) return;
 
-    if (interactable.Side != player.FacingDirection.Inverse()) { return; }
+    if (interactable.Side != null && interactable.Side != player.FacingDirection.Inverse()) { return; }
 
     interactable.OnInteraction.Emit();
 
