@@ -150,12 +150,12 @@ public static class CollisionsManager
       if (obj.Position.Y < other.Position.Y)
       {
         // Object is above, push it up
-        obj.Position = new Vector2(obj.Position.X, other.Position.Y - obj.Collider.Size.Y - obj.Collider.Offset.Y);
+        obj.Position = new Vector2(obj.Position.X, other.Position.Y - other.Collider.Size.Y - obj.Collider.Offset.Y + obj.Collider.Offset.Y);
       }
       else
       {
         // Object is below, push it down
-        obj.Position = new Vector2(obj.Position.X, other.Position.Y + other.Collider.Size.Y - obj.Collider.Offset.Y);
+        obj.Position = new Vector2(obj.Position.X, other.Position.Y + other.Collider.Size.Y + other.Collider.Offset.Y - obj.Collider.Offset.Y);
       }
     }
   }

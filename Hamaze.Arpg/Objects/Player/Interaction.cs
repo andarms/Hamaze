@@ -31,7 +31,7 @@ public class Interaction : GameObject
 
     // Place the interaction area at half of the player's size in the facing direction
     var playerCenter = player.Collider.Size * 0.5f;
-    var offset = player.FacingDirection * (player.Collider.Size * 0.5f);
+    var offset = player.FacingDirection * (player.Collider.Size) + player.Collider.Offset;
     Position = playerCenter + offset - size * 0.5f;
 
     if (InputManager.IsActionJustPressed("confirm"))

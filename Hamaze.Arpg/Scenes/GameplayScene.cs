@@ -41,12 +41,12 @@ public class GameplayScene : Scene
         };
         AddChild(box);
 
-        // Add more boxes to test collisiongam
-        Box box2 = new()
+
+        Chest chest = new()
         {
             Position = new Vector2(400, 200)
         };
-        AddChild(box2);
+        AddChild(chest);
 
         Spikes spikes = new()
         {
