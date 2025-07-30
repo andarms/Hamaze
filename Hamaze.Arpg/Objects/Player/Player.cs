@@ -34,8 +34,8 @@ public class Player : DynamicObject
     AddChild(Animations);
 
     Collider = new Collider(
-      offset: new Vector2(16, 32),
-      size: new Vector2(32, 32)
+      offset: new Vector2(0, 32),
+      size: new Vector2(64, 32)
     );
 
     Movement movement = new(player: this) { Speed = 150f };

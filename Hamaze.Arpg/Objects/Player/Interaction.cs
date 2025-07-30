@@ -43,6 +43,8 @@ public class Interaction : GameObject
     Interactable interactable = hit.Traits.Get<Interactable>();
     if (interactable == null) return;
 
+    // Check if the interactable has a side and if it matches the player's facing direction
+    // we need to inverse the direction because the player is facing the opposite way
     if (interactable.Side != null && interactable.Side != player.FacingDirection.Inverse()) { return; }
 
     interactable.OnInteraction.Emit();
@@ -51,8 +53,9 @@ public class Interaction : GameObject
 
   private void UpdatePosition()
   {
-    var playerCenter = player.Collider.Size * 0.5f;
-    var offset = player.FacingDirection.ToVector2() * player.Collider.Size + player.Collider.Offset;
-    Position = playerCenter + offset - size * 0.5f;
+    var playerCenter = player.Collider.Offset + player.Collider.Size * 0.5f;
+    // Calculate the offset in the facing direction, placing the interaction area just outside the player
+    var facingOffset = player.FacingDirection.ToVector2() * (player.Collider.Size.Y * 0.5f + size.Y * 0.5f);
+    Position = playerCenter + facingOffset - size * 0.5f;
   }
 }
