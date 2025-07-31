@@ -1,9 +1,6 @@
-using System;
-using System.Linq;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Input;
-using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
@@ -32,7 +29,7 @@ public class Interaction : GameObject
     UpdatePosition();
     if (InputManager.IsActionJustPressed("confirm"))
     {
-      ProcessInteraction();
+      CollisionsManager.TriggerInteraction(this, player.FacingDirection);
     }
   }
 
@@ -42,22 +39,6 @@ public class Interaction : GameObject
     // Calculate the offset in the facing direction, placing the interaction area just outside the player
     var facingOffset = player.FacingDirection.ToVector2() * (player.Collider.Size.Y * 0.5f + size.Y * 0.5f);
     Position = playerCenter + facingOffset - size * 0.5f;
-  }
-
-  private void ProcessInteraction()
-  {
-    var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.HasTrait<HasInteraction>());
-    if (hit == null) return;
-
-    HasInteraction interactable = hit.GetTrait<HasInteraction>();
-    if (interactable == null) return;
-
-    // Check if the interactable has a side and if it matches the player's facing direction
-    // we need to inverse the direction because the player is facing the opposite way
-    if (interactable.Side != null && interactable.Side != player.FacingDirection.Inverse()) { return; }
-
-    interactable.OnInteraction.Emit();
-
   }
 
 }

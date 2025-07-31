@@ -121,6 +121,20 @@ public static class CollisionsManager
     }
   }
 
+
+  public static void TriggerInteraction(GameObject obj, Directions facingDirection)
+  {
+    foreach (var nearby in GetPotentialCollisions(obj))
+    {
+      var interaction = nearby.GetTrait<HasInteraction>();
+      if (interaction == null) continue;
+
+      if (interaction.Side != null && interaction.Side != facingDirection.Inverse()) { continue; }
+
+      interaction.OnInteraction.Emit();
+    }
+  }
+
   public static void ResolveSolidCollision(GameObject obj, GameObject other, bool resolveX, bool resolveY)
   {
     if (other.HasTrait<IsSolid>())
