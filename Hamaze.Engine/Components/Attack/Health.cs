@@ -1,11 +1,10 @@
 using System;
-using Hamaze.Engine.Core;
 using Hamaze.Engine.Events;
+using Hamaze.Engine.Systems.Traits;
 
 namespace Hamaze.Engine.Components.Attack;
 
-
-public class Health(int current, int max) : Trait("Health")
+public class Health(int current, int max)
 {
   public bool IsDead => current <= 0;
   public Signal Dead { get; } = new();

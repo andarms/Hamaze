@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Core;
@@ -12,7 +13,7 @@ public class GameObject : IDisposable
   public Vector2 Position { get; set; } = Vector2.Zero;
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
-  public TraitCollection Traits { get; } = [];
+  internal List<Trait> traits = [];
 
   public Collider? Collider { get; set; }
 
@@ -74,7 +75,6 @@ public class GameObject : IDisposable
   {
     Children.ForEach(c => c.Draw(renderer));
     Debug(renderer);
-
   }
 
   private void Debug(Renderer renderer)

@@ -3,6 +3,7 @@ using System.Linq;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Input;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
@@ -45,10 +46,10 @@ public class Interaction : GameObject
 
   private void ProcessInteraction()
   {
-    var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.Traits.Has<Interactable>());
+    var hit = CollisionsManager.GetPotentialCollisions(this).FirstOrDefault(x => x.HasTrait<HasInteraction>());
     if (hit == null) return;
 
-    Interactable interactable = hit.Traits.Get<Interactable>();
+    HasInteraction interactable = hit.GetTrait<HasInteraction>();
     if (interactable == null) return;
 
     // Check if the interactable has a side and if it matches the player's facing direction

@@ -1,4 +1,4 @@
-namespace Hamaze.Engine.Core;
+namespace Hamaze.Engine.Systems.Traits;
 
 // <summary>
 // Traits are lightweight data containers that define the state or identity of a game object.

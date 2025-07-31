@@ -6,11 +6,12 @@ using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
 
-public class PlayerTrait() : Trait("Player") { }
+public class IsPlayer() : Trait("Player") { }
 
 public class Player : DynamicObject
 {
@@ -67,8 +68,9 @@ public class Player : DynamicObject
 
   private void AddTraits()
   {
-    Traits.Add(new PlayerTrait());
-    Traits.Add(new Solid());
-    Traits.Add(Health);
+
+    this.AddTrait(new IsPlayer());
+    this.AddTrait(new IsSolid());
+    this.AddTrait(new HasHealth(Health));
   }
 }

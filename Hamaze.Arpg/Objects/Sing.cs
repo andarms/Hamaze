@@ -3,6 +3,7 @@ using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
@@ -35,18 +36,12 @@ public class Sing : GameObject
     };
     AddChild(sprite);
 
-    Interactable interactable = new() { Side = Directions.Down };
+    HasInteraction interactable = new() { Side = Directions.Down };
     interactable.OnInteraction.Connect(() =>
     {
       Console.WriteLine(text);
     });
-    Traits.Add(interactable);
-    Traits.Add(new Solid());
-  }
-
-  public override void Update(float dt)
-  {
-    base.Update(dt);
-    // Update logic for the chess object can be added here
+    this.AddTrait(interactable);
+    this.AddTrait(new IsSolid());
   }
 }

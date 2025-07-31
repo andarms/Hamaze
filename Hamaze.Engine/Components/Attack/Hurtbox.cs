@@ -3,7 +3,7 @@
 using System;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
-
+using Hamaze.Engine.Systems.Traits;
 namespace Hamaze.Engine.Components.Attack;
 
 public class Hurtbox : GameObject
@@ -16,7 +16,8 @@ public class Hurtbox : GameObject
 
     TriggerZone zone = new();
     zone.OnEnter.Connect(HandleCollision);
-    Traits.Add(zone);
+
+    this.AddTrait(new HasTriggerZone(zone));
 
     CollisionsManager.AddObject(this);
   }

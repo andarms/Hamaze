@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Collisions;
@@ -65,8 +66,8 @@ public static class CollisionsManager
         bool wasColliding = objA.Collisions.Contains(objB);
         bool isColliding = objA.Bounds.Intersects(objB.Bounds);
 
-        TriggerZone? zoneA = objA.Traits.OfType<TriggerZone>().FirstOrDefault();
-        TriggerZone? zoneB = objB.Traits.OfType<TriggerZone>().FirstOrDefault();
+        TriggerZone? zoneA = objA.GetTrait<HasTriggerZone>()?.Zone;
+        TriggerZone? zoneB = objB.GetTrait<HasTriggerZone>()?.Zone;
 
         if (isColliding && !wasColliding)
         {
@@ -122,7 +123,7 @@ public static class CollisionsManager
 
   public static void ResolveSolidCollision(GameObject obj, GameObject other, bool resolveX, bool resolveY)
   {
-    if (other.Traits.Has<Solid>())
+    if (other.HasTrait<IsSolid>())
     {
       StopObject(obj, other, resolveX, resolveY);
     }

@@ -3,6 +3,7 @@ using Hamaze.Arpg.Objects.Ghost.States;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Ghost;
@@ -40,7 +41,7 @@ public class Ghost : DynamicObject
         machine.SetInitialState<MoveDown>();
         AddChild(machine);
 
-        Traits.Add(new Solid());
+        this.AddTrait(new IsSolid());
         // WobbleMovementAnimation wobbleAnimation = new(sprite, this);
         // AddChild(wobbleAnimation);
     }

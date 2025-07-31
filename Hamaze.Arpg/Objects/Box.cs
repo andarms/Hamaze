@@ -3,6 +3,7 @@ using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
@@ -28,15 +29,6 @@ public class Box : GameObject
         );
         CollisionsManager.AddObject(this);
 
-
-        Interactable interactable = new();
-        interactable.OnInteraction.Connect(() =>
-        {
-            Console.WriteLine($"Interacted with {Name}");
-        });
-
-        Traits.Add(new Solid());
-        Traits.Add(interactable);
-
+        this.AddTrait(new IsSolid());
     }
 }

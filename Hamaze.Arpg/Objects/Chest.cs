@@ -3,6 +3,7 @@ using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
@@ -13,6 +14,8 @@ public class Chest : GameObject
   public Rectangle ClosedSource { get; private set; } = new Rectangle(96, 0, 16, 16);
 
   public bool IsOpen { get; private set; } = false;
+
+  private readonly Sprite sprite;
 
   public Chest()
   {
@@ -28,7 +31,7 @@ public class Chest : GameObject
 
 
 
-    Sprite sprite = new(AssetsManager.TilesetElement)
+    sprite = new(AssetsManager.TilesetElement)
     {
       Position = Position,
       Origin = new Vector2(8, 16),
@@ -37,20 +40,17 @@ public class Chest : GameObject
     };
     AddChild(sprite);
 
-    Interactable interactable = new() { Side = Directions.Down };
-    interactable.OnInteraction.Connect(() =>
-    {
-      IsOpen = !IsOpen;
-      sprite.Source = IsOpen ? OpenSource : ClosedSource;
-      Traits.Remove<Interactable>();
-    });
-    Traits.Add(interactable);
-    Traits.Add(new Solid());
+    HasInteraction interactable = new() { Side = Directions.Down };
+    interactable.OnInteraction.Connect(ToggleChestState);
+    this.AddTrait(interactable);
+
+    this.AddTrait(new IsSolid());
   }
 
-  public override void Update(float dt)
+  private void ToggleChestState()
   {
-    base.Update(dt);
-    // Update logic for the chess object can be added here
+    IsOpen = !IsOpen;
+    sprite.Source = IsOpen ? OpenSource : ClosedSource;
+
   }
 }

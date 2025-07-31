@@ -1,12 +1,15 @@
+using System;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects;
 
 public class HealingZone : GameObject
 {
+  const int HEALING_AMOUNT = 10;
   public HealingZone()
   {
     Name = "Healing Zone";
@@ -18,15 +21,17 @@ public class HealingZone : GameObject
 
     TriggerZone zone = new();
     zone.OnEnter.Connect(HandleEnter);
-    Traits.Add(zone);
+    this.AddTrait(new HasTriggerZone(zone));
+
     CollisionsManager.AddObject(this);
   }
 
   private void HandleEnter(GameObject other)
   {
-    if (other.Traits.Has<Health>())
+    Health health = other.GetTrait<HasHealth>()?.Health;
+    if (health != null && !health.IsDead)
     {
-      other.Traits.Get<Health>().Heal(10);
+      health.Heal(HEALING_AMOUNT);
     }
   }
 }
