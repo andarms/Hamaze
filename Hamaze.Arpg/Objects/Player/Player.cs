@@ -6,6 +6,7 @@ using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Inventory;
 using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
@@ -18,6 +19,8 @@ public class Player : DynamicObject
   public Health Health = new(100, 100);
   public AnimationController Animations { get; private set; }
   public Directions FacingDirection { get; set; } = Directions.Down;
+
+  public Inventory Inventory { get; } = new();
 
   public Player()
   {
@@ -68,9 +71,9 @@ public class Player : DynamicObject
 
   private void AddTraits()
   {
-
     this.AddTrait(new IsPlayer());
     this.AddTrait(new IsSolid());
     this.AddTrait(new HasHealth(Health));
+    this.AddTrait(new HasInventory(Inventory));
   }
 }

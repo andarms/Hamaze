@@ -20,29 +20,3 @@ public abstract class Item
 
   public abstract void Use();
 }
-
-
-public class Pickup : GameObject
-{
-  private readonly Item item;
-
-  public Pickup(Item item)
-  {
-    this.item = item;
-    if (item.Sprite == null)
-    {
-      throw new ArgumentNullException(nameof(item.Sprite), "Item sprite cannot be null.");
-    }
-    AddChild(item.Sprite);
-
-    HasInteraction interactable = new();
-    interactable.OnInteraction.Connect(AddItemToInventory);
-    this.AddTrait(interactable);
-  }
-
-  private void AddItemToInventory()
-  {
-
-  }
-
-}

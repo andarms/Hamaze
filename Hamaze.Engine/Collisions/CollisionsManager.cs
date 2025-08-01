@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Systems.Inventory;
 using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
@@ -68,6 +69,10 @@ public static class CollisionsManager
 
         TriggerZone? zoneA = objA.GetTrait<HasTriggerZone>()?.Zone;
         TriggerZone? zoneB = objB.GetTrait<HasTriggerZone>()?.Zone;
+        CanBePickedUp? canBePickedUpA = objA.GetTrait<CanBePickedUp>();
+        CanBePickedUp? canBePickedUpB = objB.GetTrait<CanBePickedUp>();
+        HasInventory? inventoryA = objA.GetTrait<HasInventory>();
+        HasInventory? inventoryB = objB.GetTrait<HasInventory>();
 
         if (isColliding && !wasColliding)
         {
@@ -76,6 +81,16 @@ public static class CollisionsManager
 
           zoneA?.OnEnter.Emit(objB);
           zoneB?.OnEnter.Emit(objA);
+          if (canBePickedUpA != null && canBePickedUpA.AutoPickup)
+          {
+            inventoryA?.Inventory.AddItem(canBePickedUpA.Item);
+            objA.Dispose();
+          }
+          else if (canBePickedUpB != null && canBePickedUpB.AutoPickup)
+          {
+            inventoryB?.Inventory.AddItem(canBePickedUpB.Item);
+            objB.Dispose();
+          }
         }
         else if (!isColliding && wasColliding)
         {
@@ -86,8 +101,6 @@ public static class CollisionsManager
         }
       }
     }
-
-
   }
 
   private static void UpdateGrid()
@@ -121,7 +134,6 @@ public static class CollisionsManager
     }
   }
 
-
   public static void TriggerInteraction(GameObject obj, Directions facingDirection)
   {
     foreach (var nearby in GetPotentialCollisions(obj))
@@ -132,6 +144,18 @@ public static class CollisionsManager
       if (interaction.Side != null && interaction.Side != facingDirection.Inverse()) { continue; }
 
       interaction.OnInteraction.Emit();
+    }
+  }
+
+
+  public static IEnumerable<GameObject> GetPotentialPickupItems(GameObject obj)
+  {
+    foreach (var nearby in GetPotentialCollisions(obj))
+    {
+      var canBePickedUp = nearby.GetTrait<CanBePickedUp>();
+      if (canBePickedUp == null) continue;
+
+      yield return nearby;
     }
   }
 
