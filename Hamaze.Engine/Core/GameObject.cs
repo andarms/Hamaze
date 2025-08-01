@@ -94,6 +94,10 @@ public class GameObject : IDisposable
   {
     Children.ForEach(c => c.Dispose());
     Children.Clear();
+    traits.Clear();
+
+    Parent = null;
+    Collider = null;
   }
   #endregion
 }

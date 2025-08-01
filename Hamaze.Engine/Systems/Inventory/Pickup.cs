@@ -1,4 +1,5 @@
 using System;
+using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Systems.Traits;
 
@@ -6,9 +7,9 @@ namespace Hamaze.Engine.Systems.Inventory;
 
 public class Pickup : GameObject
 {
-  public Item Item { get; }
+  public IItem Item { get; }
 
-  public Pickup(Item item)
+  public Pickup(IItem item)
   {
     if (item.Sprite == null)
     {
@@ -17,5 +18,7 @@ public class Pickup : GameObject
     Item = item;
     AddChild(item.Sprite);
     this.AddTrait(new CanBePickedUp(item));
+
+    CollisionsManager.AddObject(this);
   }
 }

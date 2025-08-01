@@ -8,15 +8,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Hamaze.Engine.Systems.Inventory;
 
-public abstract class Item
+public interface IItem
 {
-  public string Name { get; set; } = string.Empty;
-  public string Description { get; set; } = string.Empty;
+  string Name { get; }
+  string Description { get; }
   // <summary>
   // The sprite used in the game world.
   // </summary>
-  public Sprite? Sprite { get; set; } = null;
-  public Texture2D? InventorySprite { get; set; } = null;
+  Sprite? Sprite { get; }
+  Sprite? InventorySprite { get; }
 
-  public abstract void Use();
+  abstract void Use();
 }

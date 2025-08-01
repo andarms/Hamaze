@@ -4,19 +4,19 @@ namespace Hamaze.Engine.Systems.Inventory;
 
 public class Inventory
 {
-  private readonly List<Item> items = [];
+  private readonly List<IItem> items = [];
 
-  public void AddItem(Item item)
+  public void AddItem(IItem item)
   {
     items.Add(item);
   }
 
-  public void RemoveItem(Item item)
+  public void RemoveItem(IItem item)
   {
     items.Remove(item);
   }
 
-  public IReadOnlyList<Item> GetItems()
+  public IReadOnlyList<IItem> GetItems()
   {
     return items.AsReadOnly();
   }

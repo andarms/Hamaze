@@ -56,7 +56,7 @@ public static class CollisionsManager
   {
 
     var checkedPairs = new HashSet<(GameObject, GameObject)>();
-    foreach (var objA in objects)
+    foreach (var objA in objects.ToList())
     {
       foreach (var objB in Grid.GetPotentialCollisions(objA))
       {
@@ -83,13 +83,16 @@ public static class CollisionsManager
           zoneB?.OnEnter.Emit(objA);
           if (canBePickedUpA != null && canBePickedUpA.AutoPickup)
           {
-            inventoryA?.Inventory.AddItem(canBePickedUpA.Item);
+            inventoryB?.Inventory.AddItem(canBePickedUpA.Item);
+            RemoveObject(objA);
             objA.Dispose();
           }
           else if (canBePickedUpB != null && canBePickedUpB.AutoPickup)
           {
-            inventoryB?.Inventory.AddItem(canBePickedUpB.Item);
+            inventoryA?.Inventory.AddItem(canBePickedUpB.Item);
+            RemoveObject(objB);
             objB.Dispose();
+
           }
         }
         else if (!isColliding && wasColliding)

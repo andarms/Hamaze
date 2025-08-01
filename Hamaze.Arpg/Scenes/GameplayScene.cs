@@ -1,10 +1,12 @@
 using System;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
+using Hamaze.Arpg.Objects.Items;
 using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Inventory;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Scenes;
@@ -54,6 +56,15 @@ public class GameplayScene : Scene
         };
         AddChild(spikes, "Background");
 
+        Pickup swordPickup = new(new SwordItem())
+        {
+            Position = new Vector2(200, 200),
+            Collider = new Collider(
+                offset: new Vector2(0, 0),
+                size: new Vector2(64)
+            )
+        };
+        AddChild(swordPickup, "Background");
 
         Sing sing = new("Hello, world!")
         {
