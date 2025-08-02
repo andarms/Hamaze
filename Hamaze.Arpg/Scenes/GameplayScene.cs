@@ -6,6 +6,7 @@ using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Input;
 using Hamaze.Engine.Systems.Inventory;
 using Microsoft.Xna.Framework;
 
@@ -13,7 +14,7 @@ namespace Hamaze.Arpg.Scenes;
 
 public class GameplayScene : Scene
 {
-    readonly Color backgroundColor = Color.CornflowerBlue;
+    public override Color BackgroundColor => Color.CornflowerBlue;
 
     Player player;
     Ghost ghost;
@@ -75,26 +76,23 @@ public class GameplayScene : Scene
         HealingZone healingZone = new() { Position = new Vector2(500, 100), };
         AddChild(healingZone);
 
-        NinePatchSprite ninePatchSprite = new(AssetsManager.Textures["UI/Inventory/Window"], 7)
-        {
-            Position = new Vector2(0, 600),
-            Size = new Vector2(320, 30)
-        };
-        AddChild(ninePatchSprite, UIOverlayLayerName);
+        SceneManager.AddScene(new InventoryScene());
     }
 
     public override void Update(float dt)
     {
         base.Update(dt);
         CollisionsManager.Update(dt);
+
+        if (InputManager.IsActionJustPressed("ToggleInventory"))
+        {
+            SceneManager.PushScene<InventoryScene>();
+        }
     }
 
     public override void Draw(Renderer renderer)
     {
-        renderer.ClearBackground(backgroundColor);
-        renderer.Begin();
         base.Draw(renderer);
-        renderer.End();
     }
 
 }

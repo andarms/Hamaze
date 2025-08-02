@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Hamaze.Engine.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
 namespace Hamaze.Engine.Core.Scenes;
@@ -12,6 +13,9 @@ public class Scene
     public const string BackgroundLayerName = "Background";
     public const string ForegroundLayerName = "Foreground";
     public const string UIOverlayLayerName = "UIOverlay";
+
+
+    public virtual Color BackgroundColor { get; } = Color.Black;
 
 
     public bool IsActive { get; protected set; } = true;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Hamaze.Engine.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Core.Scenes;
 
@@ -28,7 +29,14 @@ public static class SceneManager
 
     public static void Draw(Renderer renderer)
     {
+        renderer.Begin();
+        renderer.ClearBackground(currentScene?.BackgroundColor ?? Color.Black);
+        foreach (var scene in sceneStack)
+        {
+            scene.Draw(renderer);
+        }
         currentScene?.Draw(renderer);
+        renderer.End();
         // PhysicsWorld.Draw(renderer);
     }
 

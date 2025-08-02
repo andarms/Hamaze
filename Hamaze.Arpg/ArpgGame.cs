@@ -43,7 +43,11 @@ public class ArpgGame : Game
         InputManager.Initialize();
 
         // Setup default input map
-        InputMap.CreateDefault().Apply();
+        var map = InputMap.CreateDefault();
+        map.AddAction("ToggleInventory")
+            .WithKey(Keys.I)
+            .WithGamepadButton(Buttons.Start);
+        map.Apply();
 
         SceneManager.Initialize();
         SceneManager.SwitchTo<GameplayScene>();
