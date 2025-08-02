@@ -92,22 +92,22 @@ public static class CollisionsManager
 
   private static void HandleCollisionPickup(GameObject objA, GameObject objB)
   {
-    CanBePickedUp? PickedUpA = objA.Trait<CanBePickedUp>();
-    CanBePickedUp? PickedUpB = objB.Trait<CanBePickedUp>();
+    CanBeCollected? CanBeCollectedTraitA = objA.Trait<CanBeCollected>();
+    CanBeCollected? CanBeCollectedTraitB = objB.Trait<CanBeCollected>();
     HasInventory? inventoryA = objA.Trait<HasInventory>();
     HasInventory? inventoryB = objB.Trait<HasInventory>();
 
-    if (PickedUpA == null && PickedUpB == null) return;
+    if (CanBeCollectedTraitA == null && CanBeCollectedTraitB == null) return;
 
-    if (PickedUpA != null && PickedUpA.AutoPickup)
+    if (CanBeCollectedTraitA != null && CanBeCollectedTraitA.AutoCollectionAllowed)
     {
-      inventoryB?.Inventory.AddItem(PickedUpA.Item);
+      inventoryB?.Inventory.AddItem(CanBeCollectedTraitA.Item);
       RemoveObject(objA);
       objA.Dispose();
     }
-    else if (PickedUpB != null && PickedUpB.AutoPickup)
+    else if (CanBeCollectedTraitB != null && CanBeCollectedTraitB.AutoCollectionAllowed)
     {
-      inventoryA?.Inventory.AddItem(PickedUpB.Item);
+      inventoryA?.Inventory.AddItem(CanBeCollectedTraitB.Item);
       RemoveObject(objB);
       objB.Dispose();
     }
@@ -162,7 +162,7 @@ public static class CollisionsManager
   {
     foreach (var nearby in GetPotentialCollisions(obj))
     {
-      var canBePickedUp = nearby.Trait<CanBePickedUp>();
+      var canBePickedUp = nearby.Trait<CanBeCollected>();
       if (canBePickedUp == null) continue;
 
       yield return nearby;

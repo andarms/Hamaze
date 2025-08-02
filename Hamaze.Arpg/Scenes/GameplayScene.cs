@@ -56,7 +56,7 @@ public class GameplayScene : Scene
         };
         AddChild(spikes, "Background");
 
-        Pickup swordPickup = new(new SwordItem())
+        CollectableItem sword = new(new SwordItem())
         {
             Position = new Vector2(200, 200),
             Collider = new Collider(
@@ -64,7 +64,7 @@ public class GameplayScene : Scene
                 size: new Vector2(64)
             )
         };
-        AddChild(swordPickup, "Background");
+        AddChild(sword, "Background");
 
         Sing sing = new("Hello, world!")
         {
