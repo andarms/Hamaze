@@ -1,5 +1,4 @@
-﻿using Hamaze.Arpg.Content;
-using Hamaze.Arpg.Objects.Player;
+﻿
 using Hamaze.Arpg.Scenes;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Core.Scenes;
@@ -27,6 +26,12 @@ public class ArpgGame : Game
         graphics.SynchronizeWithVerticalRetrace = false;
 
         SceneManager.AddScene(new GameplayScene());
+
+        AssetsManager.RequestTexture("Sprites/Boy/SpriteSheet");
+        AssetsManager.RequestTexture("Sprites/NinjaGreen/SpriteSheet");
+        AssetsManager.RequestTexture("Sprites/TinyDungeon");
+        AssetsManager.RequestTexture("Tilesets/TilesetElement");
+        AssetsManager.RequestTexture("UI/Inventory/Window");
     }
 
     protected override void LoadContent()

@@ -1,5 +1,3 @@
-using System;
-using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
@@ -13,7 +11,7 @@ public class Box : GameObject
     public Box()
     {
         Name = "Box";
-        Sprite sprite = new(AssetsManager.TinyDungeon)
+        Sprite sprite = new(AssetsManager.Textures["Sprites/TinyDungeon"])
         {
             Position = Position,
             Origin = new Vector2(8, 16),

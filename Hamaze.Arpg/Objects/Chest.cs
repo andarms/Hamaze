@@ -1,5 +1,3 @@
-using System;
-using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
@@ -31,7 +29,7 @@ public class Chest : GameObject
 
 
 
-    sprite = new(AssetsManager.TilesetElement)
+    sprite = new(AssetsManager.Textures["Tilesets/TilesetElement"])
     {
       Position = Position,
       Origin = new Vector2(8, 16),

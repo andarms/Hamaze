@@ -1,5 +1,5 @@
 using System;
-using Hamaze.Arpg.Content;
+using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Systems.Inventory;
 using Microsoft.Xna.Framework;
@@ -12,14 +12,14 @@ public class SwordItem : IItem
 
   public string Description { get; } = "A sharp blade for cutting down enemies.";
 
-  public Sprite Sprite { get; } = new Sprite(AssetsManager.TinyDungeon)
+  public Sprite Sprite { get; } = new Sprite(AssetsManager.Textures["Sprites/TinyDungeon"])
   {
     Origin = new Vector2(8, 16),
     Color = Color.White,
     Source = new Rectangle(144, 144, 16, 16)
   };
 
-  public Sprite InventorySprite { get; } = new Sprite(AssetsManager.TinyDungeon)
+  public Sprite InventorySprite { get; } = new Sprite(AssetsManager.Textures["Sprites/TinyDungeon"])
   {
     Origin = new Vector2(8, 16),
     Color = Color.White,

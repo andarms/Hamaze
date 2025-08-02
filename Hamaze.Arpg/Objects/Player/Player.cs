@@ -1,6 +1,3 @@
-
-
-using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
@@ -31,7 +28,7 @@ public class Player : DynamicObject
 
   private void AddComponents()
   {
-    SpriteSheet sheet = new(AssetsManager.NinjaGreen, 16, 16);
+    SpriteSheet sheet = new(AssetsManager.Textures["Sprites/NinjaGreen/SpriteSheet"], 16, 16);
     AddChild(sheet);
 
     Animations = new(sheet);

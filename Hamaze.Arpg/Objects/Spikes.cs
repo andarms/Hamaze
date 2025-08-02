@@ -1,6 +1,3 @@
-using System;
-using Hamaze.Arpg.Content;
-using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
@@ -10,11 +7,10 @@ namespace Hamaze.Arpg.Objects;
 
 public class Spikes : GameObject
 {
-  IDamageCalculator damage = new SimpleDamage(10);
   public Spikes()
   {
     Name = "Spikes";
-    Sprite sprite = new(AssetsManager.TinyDungeon)
+    Sprite sprite = new(AssetsManager.Textures["Sprites/TinyDungeon"])
     {
       Position = Position,
       Origin = new Vector2(8, 16),

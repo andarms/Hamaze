@@ -1,4 +1,3 @@
-using Hamaze.Arpg.Content;
 using Hamaze.Arpg.Objects.Ghost.States;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
@@ -15,7 +14,7 @@ public class Ghost : DynamicObject
     public Ghost()
     {
         Name = "Ghost";
-        Sprite sprite = new(AssetsManager.TinyDungeon)
+        Sprite sprite = new(AssetsManager.Textures["Sprites/TinyDungeon"])
         {
             Position = Position,
             Origin = new Vector2(8, 16),

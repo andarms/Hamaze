@@ -1,5 +1,4 @@
 using System;
-using Hamaze.Arpg.Content;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
@@ -27,7 +26,7 @@ public class Sing : GameObject
 
 
 
-    Sprite sprite = new(AssetsManager.TilesetElement)
+    Sprite sprite = new(AssetsManager.Textures["Tilesets/TilesetElement"])
     {
       Position = Position,
       Origin = new(8, 16),
