@@ -8,7 +8,8 @@ public enum LayerPriority
 {
   Background = -1,
   Default = 0,
-  Foreground = 1
+  Foreground = 1,
+  UIOverlay = 2
 }
 
 public class ObjectLayer(string name)

@@ -1,6 +1,4 @@
-using System;
 using Hamaze.Engine.Core;
-using Hamaze.Engine.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Collisions;

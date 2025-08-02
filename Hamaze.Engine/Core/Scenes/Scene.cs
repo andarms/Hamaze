@@ -9,6 +9,10 @@ public class Scene
     protected readonly Dictionary<string, ObjectLayer> layers = [];
     protected readonly List<string> sortedLayers = [];
     public const string DefaultLayerName = "Default";
+    public const string BackgroundLayerName = "Background";
+    public const string ForegroundLayerName = "Foreground";
+    public const string UIOverlayLayerName = "UIOverlay";
+
 
     public bool IsActive { get; protected set; } = true;
     public bool IsPaused { get; protected set; } = false;
@@ -18,6 +22,12 @@ public class Scene
         ObjectLayer defaultLayer = new(DefaultLayerName);
         layers.Add(defaultLayer.Name, defaultLayer);
         sortedLayers.Add(defaultLayer.Name);
+
+        layers.Add(UIOverlayLayerName, new ObjectLayer(UIOverlayLayerName)
+        {
+            Priority = LayerPriority.UIOverlay
+        });
+        sortedLayers.Add(UIOverlayLayerName);
     }
 
     #region Child Management

@@ -46,6 +46,16 @@ public class Renderer(GraphicsDevice graphicsDevice, ContentManager content)
     );
   }
 
+  public void DrawSprite(Texture2D texture, Rectangle destination, Rectangle? source, Color color)
+  {
+    if (texture == null)
+    {
+      throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
+    }
+
+    Batch.Draw(texture, destination, source, color);
+  }
+
   public void DrawText(string text, Vector2 position, Color color)
   {
     Batch.DrawString(DefaultFont, text, position * ScaleFactor, color);

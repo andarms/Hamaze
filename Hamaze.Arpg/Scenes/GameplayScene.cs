@@ -1,4 +1,5 @@
 using System;
+using Hamaze.Arpg.Content;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Items;
@@ -74,6 +75,13 @@ public class GameplayScene : Scene
 
         HealingZone healingZone = new() { Position = new Vector2(500, 100), };
         AddChild(healingZone);
+
+        NinePatchSprite ninePatchSprite = new(AssetsManager.InventoryWindow, 7)
+        {
+            Position = new Vector2(0, 600),
+            Size = new Vector2(320, 30)
+        };
+        AddChild(ninePatchSprite, UIOverlayLayerName);
     }
 
     public override void Update(float dt)
