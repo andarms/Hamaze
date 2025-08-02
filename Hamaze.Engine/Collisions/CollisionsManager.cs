@@ -67,12 +67,8 @@ public static class CollisionsManager
         bool wasColliding = objA.Collisions.Contains(objB);
         bool isColliding = objA.Bounds.Intersects(objB.Bounds);
 
-        TriggerZone? zoneA = objA.GetTrait<HasTriggerZone>()?.Zone;
-        TriggerZone? zoneB = objB.GetTrait<HasTriggerZone>()?.Zone;
-        CanBePickedUp? canBePickedUpA = objA.GetTrait<CanBePickedUp>();
-        CanBePickedUp? canBePickedUpB = objB.GetTrait<CanBePickedUp>();
-        HasInventory? inventoryA = objA.GetTrait<HasInventory>();
-        HasInventory? inventoryB = objB.GetTrait<HasInventory>();
+        TriggerZone? zoneA = objA.Trait<HasTriggerZone>()?.Zone;
+        TriggerZone? zoneB = objB.Trait<HasTriggerZone>()?.Zone;
 
         if (isColliding && !wasColliding)
         {
@@ -81,19 +77,7 @@ public static class CollisionsManager
 
           zoneA?.OnEnter.Emit(objB);
           zoneB?.OnEnter.Emit(objA);
-          if (canBePickedUpA != null && canBePickedUpA.AutoPickup)
-          {
-            inventoryB?.Inventory.AddItem(canBePickedUpA.Item);
-            RemoveObject(objA);
-            objA.Dispose();
-          }
-          else if (canBePickedUpB != null && canBePickedUpB.AutoPickup)
-          {
-            inventoryA?.Inventory.AddItem(canBePickedUpB.Item);
-            RemoveObject(objB);
-            objB.Dispose();
-
-          }
+          HandleCollisionPickup(objA, objB);
         }
         else if (!isColliding && wasColliding)
         {
@@ -103,6 +87,29 @@ public static class CollisionsManager
           zoneB?.OnExit.Emit(objA);
         }
       }
+    }
+  }
+
+  private static void HandleCollisionPickup(GameObject objA, GameObject objB)
+  {
+    CanBePickedUp? PickedUpA = objA.Trait<CanBePickedUp>();
+    CanBePickedUp? PickedUpB = objB.Trait<CanBePickedUp>();
+    HasInventory? inventoryA = objA.Trait<HasInventory>();
+    HasInventory? inventoryB = objB.Trait<HasInventory>();
+
+    if (PickedUpA == null && PickedUpB == null) return;
+
+    if (PickedUpA != null && PickedUpA.AutoPickup)
+    {
+      inventoryB?.Inventory.AddItem(PickedUpA.Item);
+      RemoveObject(objA);
+      objA.Dispose();
+    }
+    else if (PickedUpB != null && PickedUpB.AutoPickup)
+    {
+      inventoryA?.Inventory.AddItem(PickedUpB.Item);
+      RemoveObject(objB);
+      objB.Dispose();
     }
   }
 
@@ -141,7 +148,7 @@ public static class CollisionsManager
   {
     foreach (var nearby in GetPotentialCollisions(obj))
     {
-      var interaction = nearby.GetTrait<HasInteraction>();
+      var interaction = nearby.Trait<HasInteraction>();
       if (interaction == null) continue;
 
       if (interaction.Side != null && interaction.Side != facingDirection.Inverse()) { continue; }
@@ -155,7 +162,7 @@ public static class CollisionsManager
   {
     foreach (var nearby in GetPotentialCollisions(obj))
     {
-      var canBePickedUp = nearby.GetTrait<CanBePickedUp>();
+      var canBePickedUp = nearby.Trait<CanBePickedUp>();
       if (canBePickedUp == null) continue;
 
       yield return nearby;

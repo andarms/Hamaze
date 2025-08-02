@@ -28,7 +28,7 @@ public class HealingZone : GameObject
 
   private void HandleEnter(GameObject other)
   {
-    Health health = other.GetTrait<HasHealth>()?.Health;
+    Health health = other.Trait<HasHealth>()?.Health;
     if (health != null && !health.IsDead)
     {
       health.Heal(HEALING_AMOUNT);

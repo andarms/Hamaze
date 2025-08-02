@@ -13,7 +13,8 @@ public class GameObject : IDisposable
   public Vector2 Position { get; set; } = Vector2.Zero;
   public GameObject? Parent { get; set; } = null;
   public List<GameObject> Children { get; } = [];
-  internal List<Trait> traits = [];
+  private readonly Dictionary<Type, Trait> traits = [];
+  internal Dictionary<Type, Trait> Traits => traits;
 
   public Collider? Collider { get; set; }
 

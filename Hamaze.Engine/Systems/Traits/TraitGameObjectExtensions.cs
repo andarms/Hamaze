@@ -7,22 +7,23 @@ public static class TraitGameObjectExtensions
 {
   public static void AddTrait<T>(this GameObject gameObject, T trait) where T : Trait
   {
-    gameObject.traits ??= [];
-    gameObject.traits.Add(trait);
+    gameObject.Traits.Add(typeof(T), trait);
   }
 
   public static bool HasTrait<T>(this GameObject gameObject) where T : Trait
   {
-    return gameObject.traits != null && gameObject.traits.Any(t => t is T);
+    return gameObject.Traits.ContainsKey(typeof(T));
   }
 
-  public static T? GetTrait<T>(this GameObject gameObject) where T : Trait
+  public static T? Trait<T>(this GameObject gameObject) where T : Trait
   {
-    return gameObject.traits?.FirstOrDefault(t => t is T) as T;
+    gameObject.Traits.TryGetValue(typeof(T), out var trait);
+    return trait as T;
   }
+
 
   public static void RemoveTrait<T>(this GameObject gameObject) where T : Trait
   {
-    gameObject.traits?.RemoveAll(t => t is T);
+    gameObject.Traits.Remove(typeof(T));
   }
 }
