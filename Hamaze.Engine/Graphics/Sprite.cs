@@ -16,7 +16,7 @@ public class Sprite(Texture2D texture) : GameObject
 
   public override void Draw(Renderer renderer)
   {
-    base.Draw(renderer);
     renderer.DrawSprite(this);
+    base.Draw(renderer);
   }
 }

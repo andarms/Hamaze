@@ -12,6 +12,8 @@ public class Renderer(GraphicsDevice graphicsDevice, ContentManager content)
   private readonly SpriteBatch Batch = new(graphicsDevice);
   private readonly SpriteFont DefaultFont = content.Load<SpriteFont>("Fonts/Default");
 
+  public static readonly int WindowWidth = 1280;
+  public static readonly int WindowHeight = 720;
 
   public const int ScaleFactor = 4;
 

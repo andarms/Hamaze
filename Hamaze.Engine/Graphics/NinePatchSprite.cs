@@ -37,7 +37,7 @@ public class NinePatchSprite(Texture2D texture, int left, int right, int top, in
 
   public override void Draw(Renderer renderer)
   {
-    base.Draw(renderer);
+
     // Calculate destination rectangles for each patch based on Size
     float width = Size.X;
     float height = Size.Y;
@@ -90,6 +90,8 @@ public class NinePatchSprite(Texture2D texture, int left, int right, int top, in
         renderer.DrawSprite(TexturePath, destRects[i], sources[i], Color.White);
       }
     }
+
+    base.Draw(renderer);
   }
 
 

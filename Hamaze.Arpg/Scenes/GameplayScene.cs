@@ -76,7 +76,13 @@ public class GameplayScene : Scene
         HealingZone healingZone = new() { Position = new Vector2(500, 100), };
         AddChild(healingZone);
 
-        SceneManager.AddScene(new InventoryScene());
+        InventoryScene inventoryScene = new(player.Inventory)
+        {
+            GridSize = new Vector2(5, 4)
+        };
+        SceneManager.AddScene(inventoryScene);
+
+        player.Inventory.OnInventoryChanged.Connect(inventoryScene.UpdateInventory);
     }
 
     public override void Update(float dt)

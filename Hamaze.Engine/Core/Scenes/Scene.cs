@@ -12,7 +12,7 @@ public class Scene
     public const string DefaultLayerName = "Default";
     public const string BackgroundLayerName = "Background";
     public const string ForegroundLayerName = "Foreground";
-    public const string UIOverlayLayerName = "UIOverlay";
+    public const string UIOverlayLayer = "UIOverlay";
 
 
     public virtual Color BackgroundColor { get; } = Color.Black;
@@ -27,11 +27,11 @@ public class Scene
         layers.Add(defaultLayer.Name, defaultLayer);
         sortedLayers.Add(defaultLayer.Name);
 
-        layers.Add(UIOverlayLayerName, new ObjectLayer(UIOverlayLayerName)
+        layers.Add(UIOverlayLayer, new ObjectLayer(UIOverlayLayer)
         {
             Priority = LayerPriority.UIOverlay
         });
-        sortedLayers.Add(UIOverlayLayerName);
+        sortedLayers.Add(UIOverlayLayer);
     }
 
     #region Child Management

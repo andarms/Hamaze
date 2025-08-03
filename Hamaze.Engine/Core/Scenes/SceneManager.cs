@@ -84,24 +84,21 @@ public static class SceneManager
         IsTransitioning = false;
     }
 
-    public static void PushScene<T>() where T : Scene, new()
+    public static void PushScene<T>() where T : Scene
     {
+        Scene? scene = GetScene<T>();
+        if (scene == null)
+        {
+            return;
+        }
+
         if (currentScene != null)
         {
             sceneStack.Push(currentScene);
             currentScene.OnPause();
         }
 
-        if (scenes.TryGetValue(typeof(T), out var scene))
-        {
-            currentScene = scene;
-        }
-        else
-        {
-            var newScene = new T();
-            scenes[typeof(T)] = newScene;
-            currentScene = newScene;
-        }
+        currentScene = scene;
 
         currentScene.OnEnter();
         currentScene.Initialize();

@@ -32,6 +32,7 @@ public class ArpgGame : Game
         AssetsManager.RequestTexture("Sprites/TinyDungeon");
         AssetsManager.RequestTexture("Tilesets/TilesetElement");
         AssetsManager.RequestTexture("UI/Inventory/Window");
+        AssetsManager.RequestTexture("UI/Inventory/Slot");
     }
 
     protected override void LoadContent()
