@@ -14,8 +14,8 @@ public class InventoryScene : Scene
   {
     NinePatchSprite ninePatchSprite = new(AssetsManager.Textures["UI/Inventory/Window"], 7)
     {
-      Position = new Vector2(0, 600),
-      Size = new Vector2(320, 30)
+      Position = new Vector2(240, 204),
+      Size = new Vector2(800, 400)
     };
     AddChild(ninePatchSprite, UIOverlayLayerName);
   }

@@ -61,8 +61,8 @@ public class NinePatchSprite(Texture2D texture, int left, int right, int top, in
     int scaledRight = (TexturePath.Width - right) * Renderer.ScaleFactor;
     int scaledTop = top * Renderer.ScaleFactor;
     int scaledBottom = (TexturePath.Height - bottom) * Renderer.ScaleFactor;
-    int scaledCenterWidth = (int)(centerWidth * Renderer.ScaleFactor);
-    int scaledCenterHeight = (int)(centerHeight * Renderer.ScaleFactor);
+    int scaledCenterWidth = (int)centerWidth - ((left + right) * Renderer.ScaleFactor);
+    int scaledCenterHeight = (int)centerHeight - ((top + bottom) * Renderer.ScaleFactor);
 
     // Top row
     Rectangle[] destRects =
