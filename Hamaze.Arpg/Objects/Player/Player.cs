@@ -1,3 +1,4 @@
+using System.Xml.Serialization;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Components.UI;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework;
 namespace Hamaze.Arpg.Objects.Player;
 
 public class IsPlayer() : Trait("Player") { }
+
 
 public class Player : DynamicObject
 {

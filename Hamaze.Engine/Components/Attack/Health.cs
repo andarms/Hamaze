@@ -10,6 +10,10 @@ public class Health(int current, int max)
   public Signal Dead { get; } = new();
   public Signal<int> HealthChanged { get; } = new();
 
+  public Health() : this(0, 0)
+  {
+  }
+
   public void TakeDamage(int amount)
   {
     if (IsDead) return;

@@ -11,4 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Hamaze.Engine\Hamaze.Engine.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\player.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

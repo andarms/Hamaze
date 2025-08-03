@@ -1,3 +1,8 @@
+using System;
+using System.Data;
+using System.IO;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Items;
@@ -5,6 +10,7 @@ using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Core.Scenes;
+using Hamaze.Engine.Data;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Input;
 using Hamaze.Engine.Systems.Inventory;
@@ -83,6 +89,40 @@ public class GameplayScene : Scene
         SceneManager.AddScene(inventoryScene);
 
         player.Inventory.OnInventoryChanged.Connect(inventoryScene.UpdateInventory);
+
+        // Load player data from XML file using AppContext.BaseDirectory for reliable path resolution
+        string dataPath = Path.Combine(AppContext.BaseDirectory, "Data", "player.xml");
+        Console.WriteLine($"Looking for player.xml at: {dataPath}");
+
+        LoadGameObjects(dataPath);
+    }
+
+    private void LoadGameObjects(string dataPath)
+    {
+        if (File.Exists(dataPath))
+        {
+            using var stream = File.OpenRead(dataPath);
+            var serializer = new XmlSerializer(typeof(GameObjectData));
+            var gameObject = (GameObjectData)serializer.Deserialize(stream);
+
+            GameObject obj = new()
+            {
+                Name = gameObject.Name,
+                Position = gameObject.Position.ToVector2(),
+            };
+            if (gameObject.Collider != null)
+            {
+                obj.Collider = new Collider(
+                    offset: gameObject.Collider.Offset.ToVector2(),
+                    size: gameObject.Collider.Size.ToVector2()
+                );
+            }
+            AddChild(obj);
+        }
+        else
+        {
+            Console.WriteLine($"Warning: Could not find player.xml file at {dataPath}");
+        }
     }
 
     public override void Update(float dt)
