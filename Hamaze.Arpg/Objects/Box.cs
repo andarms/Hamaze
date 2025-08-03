@@ -1,3 +1,4 @@
+using System;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;

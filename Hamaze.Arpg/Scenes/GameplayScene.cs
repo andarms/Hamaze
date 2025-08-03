@@ -99,29 +99,20 @@ public class GameplayScene : Scene
 
     private void LoadGameObjects(string dataPath)
     {
-        if (File.Exists(dataPath))
-        {
-            using var stream = File.OpenRead(dataPath);
-            var serializer = new XmlSerializer(typeof(GameObjectData));
-            var gameObject = (GameObjectData)serializer.Deserialize(stream);
-
-            GameObject obj = new()
-            {
-                Name = gameObject.Name,
-                Position = gameObject.Position.ToVector2(),
-            };
-            if (gameObject.Collider != null)
-            {
-                obj.Collider = new Collider(
-                    offset: gameObject.Collider.Offset.ToVector2(),
-                    size: gameObject.Collider.Size.ToVector2()
-                );
-            }
-            AddChild(obj);
-        }
-        else
+        if (!File.Exists(dataPath))
         {
             Console.WriteLine($"Warning: Could not find player.xml file at {dataPath}");
+            return;
+        }
+
+        using StreamReader reader = new(dataPath);
+        XElement root = XElement.Load(reader);
+
+        GameObject gameObject = new();
+        gameObject.Deserialize(root);
+        if (gameObject != null)
+        {
+            AddChild(gameObject);
         }
     }
 

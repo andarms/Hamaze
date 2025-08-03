@@ -1,8 +1,17 @@
-<GameObject>
-    <Position x="0" y="200" />
-    <Name>Player</Name>
-    <Collider>
-        <Offset x="0" y="0" />
-        <Size x="64" y="64" />
-    </Collider>
+<GameObject Name="Box">
+  <Position X="40" Y="64" />
+  <Collider>
+    <Offset X="0" Y="0" />
+    <Size X="64" Y="64" />
+  </Collider>
+  <Children>
+    <Sprite>
+      <Position X="0" Y="0" />
+      <TexturePath>Sprites/TinyDungeon</TexturePath>
+      <Color R="255" G="255" B="255" A="255" />
+      <Source X="48" Y="96" Width="16" Height="16" />
+      <Origin X="8" Y="16" />
+      <Rotation>0</Rotation>
+    </Sprite>
+  </Children>
 </GameObject>

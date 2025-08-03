@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Serialization;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Components.Attack;

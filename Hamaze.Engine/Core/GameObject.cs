@@ -1,11 +1,55 @@
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Hamaze.Engine.Collisions;
+using Hamaze.Engine.Data;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Core;
+
+public class GameObjectSerializer(GameObject data) : IPersistenceData
+{
+  public XElement Serialize()
+  {
+    XElement element = new("GameObject");
+    element.SetAttributeValue("Name", data.Name);
+    element.Add(data.Position.Serialize("Position"));
+    if (data.Collider != null)
+    {
+      element.Add(data.Collider.Serialize("Collider"));
+    }
+    return element;
+  }
+
+  public void Deserialize(XElement saveData)
+  {
+    ArgumentNullException.ThrowIfNull(saveData);
+
+    data.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
+    XElement? positionData = saveData.Element("Position");
+    if (positionData != null)
+    {
+      data.Position = PersistenceDataExtensions.Deserialize(positionData);
+    }
+
+    XElement? colliderData = saveData.Element("Collider");
+    if (colliderData != null)
+    {
+      data.Collider = new Collider();
+      data.Collider = data.Collider.Deserialize(colliderData);
+    }
+
+    // foreach (var childElement in saveData.Element("Children")?.Elements() ?? [])
+    // {
+    //   GameObject child = new GameObject();
+    //   child.Deserialize(childElement);
+    //   data.AddChild(child);
+    // }
+  }
+
+}
 
 public class GameObject : IDisposable
 {
@@ -15,7 +59,6 @@ public class GameObject : IDisposable
   public List<GameObject> Children { get; } = [];
   private readonly Dictionary<Type, Trait> traits = [];
   internal Dictionary<Type, Trait> Traits => traits;
-
   public Collider? Collider { get; set; }
 
   public Rectangle Bounds => GetColliderBounds();
@@ -43,6 +86,37 @@ public class GameObject : IDisposable
   private void SetGlobalPosition(Vector2 value)
   {
     Position = Parent == null ? value : value - Parent.GlobalPosition;
+  }
+
+  public GameObject()
+  {
+    PersistenceData = new GameObjectSerializer(this);
+  }
+
+  public IPersistenceData? PersistenceData { get; set; } = null;
+
+  public XElement? Serialize()
+  {
+    XElement? root = PersistenceData?.Serialize();
+    if (root != null && Children.Count > 0)
+    {
+      var childrenElement = new XElement("Children");
+      foreach (var child in Children)
+      {
+        var childData = child.Serialize();
+        if (childData != null)
+        {
+          childrenElement.Add(childData);
+        }
+      }
+      root.Add(childrenElement);
+    }
+    return root;
+  }
+
+  public void Deserialize(XElement data)
+  {
+    PersistenceData?.Deserialize(data);
   }
 
   #region Children Management
