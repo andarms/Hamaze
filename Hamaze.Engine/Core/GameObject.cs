@@ -46,16 +46,9 @@ public class GameObject : IDisposable
     Position = Parent == null ? value : value - Parent.GlobalPosition;
   }
 
-  public GameObject()
+  public virtual XElement? Serialize()
   {
-    SerializableState = new GameObjectSerializer(this);
-  }
-
-  public ISerializableData? SerializableState { get; set; } = null;
-
-  public XElement? Serialize()
-  {
-    XElement? root = SerializableState?.Serialize();
+    XElement? root = GameObjectSerializer.Serialize(this);
     if (root != null && Children.Count > 0)
     {
       var childrenElement = new XElement("Children");
@@ -72,9 +65,9 @@ public class GameObject : IDisposable
     return root;
   }
 
-  public void Deserialize(XElement data)
+  public virtual void Deserialize(XElement data)
   {
-    SerializableState?.Deserialize(data);
+    GameObjectSerializer.Deserialize(this, data);
   }
 
   #region Children Management

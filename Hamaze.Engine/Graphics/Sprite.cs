@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Linq;
 using Hamaze.Engine.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,11 +14,6 @@ public class Sprite : GameObject
   public Vector2 Origin { get; set; } = Vector2.Zero;
   public float Rotation { get; set; } = 0f;
 
-  public Sprite()
-  {
-    SerializableState = new SpriteSerializer(this);
-  }
-
   public override void Initialize()
   {
     base.Initialize();
@@ -28,5 +24,11 @@ public class Sprite : GameObject
   {
     renderer.DrawSprite(this);
     base.Draw(renderer);
+  }
+  public override XElement? Serialize() => SpriteSerializer.Serialize(this);
+  public override void Deserialize(XElement data)
+  {
+    base.Deserialize(data);
+    SpriteSerializer.Deserialize(data, this);
   }
 }

@@ -5,11 +5,9 @@ using Hamaze.Engine.Core;
 
 namespace Hamaze.Engine.Data;
 
-public class GameObjectSerializer(GameObject data) : ISerializableData
+public static class GameObjectSerializer
 {
-  private static readonly IGameObjectFactory Factory = new DefaultGameObjectFactory();
-
-  public XElement Serialize()
+  public static XElement Serialize(GameObject data)
   {
     XElement element = new("GameObject");
     element.SetAttributeValue("Name", data.Name);
@@ -21,57 +19,49 @@ public class GameObjectSerializer(GameObject data) : ISerializableData
     return element;
   }
 
-  public void Deserialize(XElement saveData)
+  public static void Deserialize(GameObject obj, XElement saveData)
   {
     ArgumentNullException.ThrowIfNull(saveData);
 
-    try
+    obj.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
+
+    XElement? positionData = saveData.Element("Position");
+    if (positionData != null)
     {
-      data.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
+      obj.Position = XmlValidationHelper.SafeParseVector2(positionData, obj.Position);
+    }
 
-      XElement? positionData = saveData.Element("Position");
-      if (positionData != null)
-      {
-        data.Position = XmlValidationHelper.SafeParseVector2(positionData, data.Position);
-      }
+    XElement? colliderData = saveData.Element("Collider");
+    if (colliderData != null)
+    {
+      obj.Collider = new Collider();
+      obj.Collider = obj.Collider.Deserialize(colliderData);
+    }
 
-      XElement? colliderData = saveData.Element("Collider");
-      if (colliderData != null)
+    // Deserialize children
+    XElement? childrenElement = saveData.Element("Children");
+    if (childrenElement != null)
+    {
+      foreach (var childElement in childrenElement.Elements())
       {
-        data.Collider = new Collider();
-        data.Collider = data.Collider.Deserialize(colliderData);
-      }
-
-      // Deserialize children
-      XElement? childrenElement = saveData.Element("Children");
-      if (childrenElement != null)
-      {
-        foreach (var childElement in childrenElement.Elements())
+        try
         {
-          try
+          GameObject? child = GameObjectFactory.CreateFromElement(childElement);
+          if (child != null)
           {
-            GameObject? child = Factory.CreateFromElement(childElement);
-            if (child != null)
-            {
-              child.Deserialize(childElement);
-              data.AddChild(child);
-            }
-            else
-            {
-              Console.WriteLine($"Warning: Unknown child element type '{childElement.Name.LocalName}' skipped");
-            }
+            child.Deserialize(childElement);
+            obj.AddChild(child);
           }
-          catch (Exception ex)
+          else
           {
-            Console.WriteLine($"Error deserializing child element '{childElement.Name.LocalName}': {ex.Message}");
+            Console.WriteLine($"Warning: Unknown child element type '{childElement.Name.LocalName}' skipped");
           }
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine($"Error deserializing child element '{childElement.Name.LocalName}': {ex.Message}");
         }
       }
     }
-    catch (Exception ex)
-    {
-      Console.WriteLine($"Error deserializing GameObject '{data.Name}': {ex.Message}");
-    }
   }
-
 }

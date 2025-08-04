@@ -6,20 +6,16 @@ using Hamaze.Engine.Graphics;
 
 namespace Hamaze.Engine.Data;
 
-public interface IGameObjectFactory
-{
-  GameObject? CreateFromElement(XElement element);
-}
 
-public class DefaultGameObjectFactory : IGameObjectFactory
+public static class GameObjectFactory
 {
-  private readonly Dictionary<string, Func<GameObject>> gameObjectCreators = new()
+  private static readonly Dictionary<string, Func<GameObject>> gameObjectCreators = new()
   {
       { "GameObject", () => new GameObject() },
       { "Sprite", () => new Sprite() }
   };
 
-  public GameObject? CreateFromElement(XElement element)
+  public static GameObject? CreateFromElement(XElement element)
   {
     string elementName = element.Name.LocalName;
 
@@ -31,7 +27,7 @@ public class DefaultGameObjectFactory : IGameObjectFactory
     return null;
   }
 
-  public void RegisterType<T>(string elementName, Func<T> creator) where T : GameObject
+  public static void RegisterType<T>(string elementName, Func<T> creator) where T : GameObject
   {
     gameObjectCreators[elementName] = () => creator();
   }

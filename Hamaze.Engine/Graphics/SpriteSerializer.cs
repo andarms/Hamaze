@@ -2,76 +2,64 @@ using System;
 using System.Xml.Linq;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Data;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Hamaze.Engine.Graphics;
 
-public class SpriteSerializer(Sprite data) : ISerializableData
+public static class SpriteSerializer
 {
-  public Sprite Data { get; } = data;
-
-  XElement ISerializableData.Serialize()
+  public static XElement Serialize(Sprite data)
   {
     var element = new XElement("Sprite");
-    element.Add(Data.Position.Serialize("Position"));
-    element.Add(new XElement("TexturePath", Data.Texture.Name));
-    element.Add(Data.Color.Serialize("Color"));
-    element.Add(Data.Source?.Serialize("Source"));
-    element.Add(Data.Origin.Serialize("Origin"));
-    element.Add(new XElement("Rotation", Data.Rotation));
+    element.Add(data.Position.Serialize("Position"));
+    element.Add(new XElement("TexturePath", data.Texture.Name));
+    element.Add(data.Color.Serialize("Color"));
+    element.Add(data.Source?.Serialize("Source"));
+    element.Add(data.Origin.Serialize("Origin"));
+    element.Add(new XElement("Rotation", data.Rotation));
+
+    // Serialize children
+    if (data.Children.Count > 0)
+    {
+      var childrenElement = new XElement("Children");
+      foreach (var child in data.Children)
+      {
+        var childData = child.Serialize();
+        if (childData != null)
+        {
+          childrenElement.Add(childData);
+        }
+      }
+      element.Add(childrenElement);
+    }
     return element;
   }
 
-  public void Deserialize(XElement data)
+  public static void Deserialize(XElement data, Sprite sprite)
   {
-    try
+    var texturePath = data.Element("TexturePath")?.Value;
+    ArgumentNullException.ThrowIfNull(texturePath, "TexturePath cannot be null");
+    if (!AssetsManager.Textures.TryGetValue(texturePath, out Texture2D? texture))
     {
-      // Deserialize position from data
-      XElement? positionElement = data.Element("Position");
-      if (positionElement != null)
-      {
-        Data.Position = XmlValidationHelper.SafeParseVector2(positionElement);
-      }
-
-      // Deserialize texture
-      var texturePath = data.Element("TexturePath")?.Value;
-      if (!string.IsNullOrEmpty(texturePath) && AssetsManager.Textures.ContainsKey(texturePath))
-      {
-        Data.Texture = AssetsManager.Textures[texturePath];
-      }
-      else if (!string.IsNullOrEmpty(texturePath))
-      {
-        // Log warning about missing texture
-        Console.WriteLine($"Warning: Texture '{texturePath}' not found in AssetsManager");
-      }
-
-      // Deserialize color
-      XElement? colorElement = data.Element("Color");
-      if (colorElement != null)
-      {
-        Data.Color = XmlValidationHelper.SafeParseColor(colorElement, Data.Color);
-      }
-
-      // Deserialize source rectangle
-      XElement? sourceElement = data.Element("Source");
-      if (sourceElement != null)
-      {
-        Data.Source = XmlValidationHelper.SafeParseRectangle(sourceElement);
-      }
-
-      // Deserialize origin
-      XElement? originElement = data.Element("Origin");
-      if (originElement != null)
-      {
-        Data.Origin = XmlValidationHelper.SafeParseVector2(originElement, Data.Origin);
-      }
-
-      // Deserialize rotation
-      Data.Rotation = XmlValidationHelper.SafeParseFloat(data.Element("Rotation")?.Value, Data.Rotation);
+      throw new InvalidOperationException($"Texture '{texturePath}' not found in AssetsManager");
     }
-    catch (Exception ex)
+    sprite.Texture = texture;
+
+    XElement? colorElement = data.Element("Color");
+    if (colorElement != null)
     {
-      Console.WriteLine($"Error deserializing Sprite: {ex.Message}");
-      // Keep default values on error
+      sprite.Color = XmlValidationHelper.SafeParseColor(colorElement, sprite.Color);
     }
+    XElement? sourceElement = data.Element("Source");
+    if (sourceElement != null)
+    {
+      sprite.Source = XmlValidationHelper.SafeParseRectangle(sourceElement);
+    }
+    XElement? originElement = data.Element("Origin");
+    if (originElement != null)
+    {
+      sprite.Origin = XmlValidationHelper.SafeParseVector2(originElement, sprite.Origin);
+    }
+    sprite.Rotation = XmlValidationHelper.SafeParseFloat(data.Element("Rotation")?.Value, sprite.Rotation);
   }
 }
