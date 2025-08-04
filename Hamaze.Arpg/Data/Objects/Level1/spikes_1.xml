@@ -4,7 +4,9 @@
   <Children>
     <Sprite>
       <Position X="0" Y="0" />
-      <TexturePath>Sprites/TinyDungeon</TexturePath>
+      <Texture>
+        <TexturePath>Sprites/TinyDungeon</TexturePath>
+      </Texture>
       <Color R="255" G="255" B="255" A="255" />
       <Source X="80" Y="48" Width="16" Height="16" />
       <Origin X="8" Y="16" />

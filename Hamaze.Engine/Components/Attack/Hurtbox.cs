@@ -26,7 +26,7 @@ public class Hurtbox : GameObject
   {
     if (other is Hitbox hitbox)
     {
-      health.TakeDamage(hitbox.Damage.CalculateDamage());
+      health.TakeDamage(hitbox.DamageCalculator.CalculateDamage());
     }
   }
 }

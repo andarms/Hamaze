@@ -1,6 +1,7 @@
 using System;
 using System.Xml.Linq;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,10 +9,19 @@ namespace Hamaze.Engine.Graphics;
 
 public class Sprite : GameObject
 {
+  [Save]
   public Texture2D Texture { get; set; } = null!;
+
+  [Save]
   public Color Color { get; set; } = Color.White;
+
+  [Save]
   public Rectangle? Source { get; set; } = null;
+
+  [Save]
   public Vector2 Origin { get; set; } = Vector2.Zero;
+
+  [Save]
   public float Rotation { get; set; } = 0f;
 
   public override void Initialize()
@@ -24,11 +34,5 @@ public class Sprite : GameObject
   {
     renderer.DrawSprite(this);
     base.Draw(renderer);
-  }
-  public override XElement? Serialize() => SpriteSerializer.Serialize(this);
-  public override void Deserialize(XElement data)
-  {
-    base.Deserialize(data);
-    SpriteSerializer.Deserialize(data, this);
   }
 }

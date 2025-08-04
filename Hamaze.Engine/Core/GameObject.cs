@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Data;
@@ -48,8 +50,17 @@ public class GameObject : IDisposable
 
   public virtual XElement? Serialize()
   {
-    XElement? root = GameObjectSerializer.Serialize(this);
-    if (root != null && Children.Count > 0)
+    XElement root = GameObjectSerializer.Serialize(this);
+    var a = GetSavedMembers();
+    foreach (var member in a)
+    {
+      if (member is PropertyInfo property)
+      {
+        XElement m = MemberSerializer.Serialize(property, property.GetValue(this));
+        root.Add(m);
+      }
+    }
+    if (Children.Count > 0)
     {
       var childrenElement = new XElement("Children");
       foreach (var child in Children)
@@ -68,6 +79,16 @@ public class GameObject : IDisposable
   public virtual void Deserialize(XElement data)
   {
     GameObjectSerializer.Deserialize(this, data);
+    foreach (var member in GetSavedMembers())
+    {
+      if (member is not PropertyInfo property)
+      {
+        continue;
+      }
+
+      var value = MemberSerializer.Deserialize(data.Element(property.Name) ?? throw new InvalidOperationException($"Missing element: {property.Name}"), property.PropertyType);
+      property.SetValue(this, value);
+    }
   }
 
   #region Children Management
@@ -133,4 +154,9 @@ public class GameObject : IDisposable
     Collider = null;
   }
   #endregion
+
+  public IEnumerable<MemberInfo> GetSavedMembers() => GetType()
+    .GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+    .Where(m => (m is PropertyInfo or FieldInfo) && m.GetCustomAttribute<SaveAttribute>() != null);
+
 }

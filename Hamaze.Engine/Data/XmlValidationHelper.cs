@@ -1,7 +1,9 @@
 using System;
 using System.Globalization;
 using System.Xml.Linq;
+using Hamaze.Engine.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Hamaze.Engine.Data;
 
@@ -82,6 +84,26 @@ public static class XmlValidationHelper
     }
 
     return defaultValue;
+  }
+
+
+  public static Texture2D SafeParseTexture(XElement? element)
+  {
+    ArgumentNullException.ThrowIfNull(element);
+    var texturePath = element.Element("TexturePath")?.Value;
+    if (string.IsNullOrEmpty(texturePath))
+    {
+      throw new InvalidOperationException("TexturePath element is missing or empty.");
+    }
+    return AssetsManager.Textures[texturePath] ?? throw new InvalidOperationException($"Texture not found: {texturePath}");
+  }
+
+  public static XElement SerializeTexture(Texture2D texture, string elementName)
+  {
+    ArgumentNullException.ThrowIfNull(texture);
+    XElement property = new(elementName);
+    property.Add(new XElement("TexturePath", texture.Name));
+    return property;
   }
 
   public static float SafeParseFloat(string? value, float defaultValue = 0f)

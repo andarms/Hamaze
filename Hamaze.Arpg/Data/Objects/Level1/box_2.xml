@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <GameObject Name="Box">
   <Position X="600" Y="4" />
   <Collider>
@@ -8,7 +7,9 @@
   <Children>
     <Sprite>
       <Position X="0" Y="0" />
-      <TexturePath>Sprites/TinyDungeon</TexturePath>
+      <Texture>
+        <TexturePath>Sprites/TinyDungeon</TexturePath>
+      </Texture>
       <Color R="255" G="255" B="255" A="255" />
       <Source X="48" Y="96" Width="16" Height="16" />
       <Origin X="8" Y="16" />

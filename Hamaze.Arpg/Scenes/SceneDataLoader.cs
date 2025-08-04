@@ -49,18 +49,11 @@ public static class SceneDataLoader
     {
       using StreamReader reader = new(dataPath);
       XElement root = XElement.Load(reader);
-      var validationResult = XmlSchemaValidator.ValidateGameObject(root);
-      validationResult.PrintToConsole();
-
-      if (!validationResult.IsValid)
-      {
-        Console.WriteLine("XML validation failed. Attempting to load anyway...");
-      }
-
       GameObject gameObject = new();
       gameObject.Deserialize(root);
       if (gameObject != null)
       {
+        Console.WriteLine(gameObject.Serialize());
         return gameObject;
       }
     }
