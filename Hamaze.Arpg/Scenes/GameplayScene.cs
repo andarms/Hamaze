@@ -1,7 +1,5 @@
-using System;
 using System.Data;
-using System.IO;
-using System.Xml.Linq;
+using System.Linq;
 using System.Xml.Serialization;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
@@ -10,7 +8,6 @@ using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Core.Scenes;
-using Hamaze.Engine.Data;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Input;
 using Hamaze.Engine.Systems.Inventory;
@@ -90,43 +87,13 @@ public class GameplayScene : Scene
 
         player.Inventory.OnInventoryChanged.Connect(inventoryScene.UpdateInventory);
 
-        string dataPath = Path.Combine(AppContext.BaseDirectory, "Data", "player.xml");
-        LoadGameObjects(dataPath);
-    }
 
-    private void LoadGameObjects(string dataPath)
-    {
-        if (!File.Exists(dataPath))
+        foreach (GameObject obj in SceneDataLoader.LoadGameObjects())
         {
-            Console.WriteLine($"Warning: Could not find player.xml file at {dataPath}");
-            return;
-        }
-
-        try
-        {
-            using StreamReader reader = new(dataPath);
-            XElement root = XElement.Load(reader);
-            var validationResult = XmlSchemaValidator.ValidateGameObject(root);
-            validationResult.PrintToConsole();
-
-            if (!validationResult.IsValid)
-            {
-                Console.WriteLine("XML validation failed. Attempting to load anyway...");
-            }
-
-            GameObject gameObject = new();
-            gameObject.Deserialize(root);
-            if (gameObject != null)
-            {
-                AddChild(gameObject);
-                Console.WriteLine($"Successfully loaded GameObject '{gameObject.Name}' from {dataPath}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading XML file {dataPath}: {ex.Message}");
+            AddChild(obj);
         }
     }
+
 
     public override void Update(float dt)
     {

@@ -12,7 +12,7 @@
     <ProjectReference Include="..\Hamaze.Engine\Hamaze.Engine.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\player.xml">
+    <Content Include="Data\**\*.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
