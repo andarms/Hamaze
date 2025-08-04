@@ -90,10 +90,7 @@ public class GameplayScene : Scene
 
         player.Inventory.OnInventoryChanged.Connect(inventoryScene.UpdateInventory);
 
-        // Load player data from XML file using AppContext.BaseDirectory for reliable path resolution
         string dataPath = Path.Combine(AppContext.BaseDirectory, "Data", "player.xml");
-        Console.WriteLine($"Looking for player.xml at: {dataPath}");
-
         LoadGameObjects(dataPath);
     }
 
@@ -105,14 +102,29 @@ public class GameplayScene : Scene
             return;
         }
 
-        using StreamReader reader = new(dataPath);
-        XElement root = XElement.Load(reader);
-
-        GameObject gameObject = new();
-        gameObject.Deserialize(root);
-        if (gameObject != null)
+        try
         {
-            AddChild(gameObject);
+            using StreamReader reader = new(dataPath);
+            XElement root = XElement.Load(reader);
+            var validationResult = XmlSchemaValidator.ValidateGameObject(root);
+            validationResult.PrintToConsole();
+
+            if (!validationResult.IsValid)
+            {
+                Console.WriteLine("XML validation failed. Attempting to load anyway...");
+            }
+
+            GameObject gameObject = new();
+            gameObject.Deserialize(root);
+            if (gameObject != null)
+            {
+                AddChild(gameObject);
+                Console.WriteLine($"Successfully loaded GameObject '{gameObject.Name}' from {dataPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading XML file {dataPath}: {ex.Message}");
         }
     }
 

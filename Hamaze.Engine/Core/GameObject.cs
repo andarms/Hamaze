@@ -9,48 +9,6 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Engine.Core;
 
-public class GameObjectSerializer(GameObject data) : IPersistenceData
-{
-  public XElement Serialize()
-  {
-    XElement element = new("GameObject");
-    element.SetAttributeValue("Name", data.Name);
-    element.Add(data.Position.Serialize("Position"));
-    if (data.Collider != null)
-    {
-      element.Add(data.Collider.Serialize("Collider"));
-    }
-    return element;
-  }
-
-  public void Deserialize(XElement saveData)
-  {
-    ArgumentNullException.ThrowIfNull(saveData);
-
-    data.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
-    XElement? positionData = saveData.Element("Position");
-    if (positionData != null)
-    {
-      data.Position = PersistenceDataExtensions.Deserialize(positionData);
-    }
-
-    XElement? colliderData = saveData.Element("Collider");
-    if (colliderData != null)
-    {
-      data.Collider = new Collider();
-      data.Collider = data.Collider.Deserialize(colliderData);
-    }
-
-    // foreach (var childElement in saveData.Element("Children")?.Elements() ?? [])
-    // {
-    //   GameObject child = new GameObject();
-    //   child.Deserialize(childElement);
-    //   data.AddChild(child);
-    // }
-  }
-
-}
-
 public class GameObject : IDisposable
 {
   public string Name { get; set; } = "Game Object";
@@ -90,14 +48,14 @@ public class GameObject : IDisposable
 
   public GameObject()
   {
-    PersistenceData = new GameObjectSerializer(this);
+    SerializableState = new GameObjectSerializer(this);
   }
 
-  public IPersistenceData? PersistenceData { get; set; } = null;
+  public ISerializableData? SerializableState { get; set; } = null;
 
   public XElement? Serialize()
   {
-    XElement? root = PersistenceData?.Serialize();
+    XElement? root = SerializableState?.Serialize();
     if (root != null && Children.Count > 0)
     {
       var childrenElement = new XElement("Children");
@@ -116,7 +74,7 @@ public class GameObject : IDisposable
 
   public void Deserialize(XElement data)
   {
-    PersistenceData?.Deserialize(data);
+    SerializableState?.Deserialize(data);
   }
 
   #region Children Management

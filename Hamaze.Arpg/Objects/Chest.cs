@@ -29,8 +29,9 @@ public class Chest : GameObject
 
 
 
-    sprite = new(AssetsManager.Textures["Tilesets/TilesetElement"])
+    sprite = new()
     {
+      Texture = AssetsManager.Textures["Tilesets/TilesetElement"],
       Position = Position,
       Origin = new Vector2(8, 16),
       Color = Color.White,

@@ -1,38 +1,77 @@
-using System.Xml.Serialization;
-using Microsoft.Xna.Framework;
+using System;
+using System.Xml.Linq;
+using Hamaze.Engine.Collisions;
+using Hamaze.Engine.Core;
 
 namespace Hamaze.Engine.Data;
 
-[XmlRoot("GameObject")]
-public class GameObjectData
+public class GameObjectSerializer(GameObject data) : ISerializableData
 {
-  [XmlElement("Position")]
-  public Vector2Data Position { get; set; } = null!;
+  private static readonly IGameObjectFactory Factory = new DefaultGameObjectFactory();
 
-  [XmlElement("Name")]
-  public string Name { get; set; } = string.Empty;
+  public XElement Serialize()
+  {
+    XElement element = new("GameObject");
+    element.SetAttributeValue("Name", data.Name);
+    element.Add(data.Position.Serialize("Position"));
+    if (data.Collider != null)
+    {
+      element.Add(data.Collider.Serialize("Collider"));
+    }
+    return element;
+  }
 
-  [XmlElement("Collider")]
-  public ColliderData? Collider { get; set; }
-}
+  public void Deserialize(XElement saveData)
+  {
+    ArgumentNullException.ThrowIfNull(saveData);
 
-public class Vector2Data
-{
-  [XmlAttribute("x")]
-  public float X { get; set; }
+    try
+    {
+      data.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
 
-  [XmlAttribute("y")]
-  public float Y { get; set; }
+      XElement? positionData = saveData.Element("Position");
+      if (positionData != null)
+      {
+        data.Position = XmlValidationHelper.SafeParseVector2(positionData, data.Position);
+      }
 
-  public Vector2 ToVector2() => new(X, Y);
-}
+      XElement? colliderData = saveData.Element("Collider");
+      if (colliderData != null)
+      {
+        data.Collider = new Collider();
+        data.Collider = data.Collider.Deserialize(colliderData);
+      }
 
+      // Deserialize children
+      XElement? childrenElement = saveData.Element("Children");
+      if (childrenElement != null)
+      {
+        foreach (var childElement in childrenElement.Elements())
+        {
+          try
+          {
+            GameObject? child = Factory.CreateFromElement(childElement);
+            if (child != null)
+            {
+              child.Deserialize(childElement);
+              data.AddChild(child);
+            }
+            else
+            {
+              Console.WriteLine($"Warning: Unknown child element type '{childElement.Name.LocalName}' skipped");
+            }
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine($"Error deserializing child element '{childElement.Name.LocalName}': {ex.Message}");
+          }
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Error deserializing GameObject '{data.Name}': {ex.Message}");
+    }
+  }
 
-public class ColliderData
-{
-  [XmlElement("Offset")]
-  public Vector2Data Offset { get; set; } = null!;
-
-  [XmlElement("Size")]
-  public Vector2Data Size { get; set; } = null!;
 }

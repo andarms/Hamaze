@@ -16,8 +16,9 @@ public class InventorySlot : GameObject
 
   public InventorySlot()
   {
-    sprite = new(AssetsManager.Textures["UI/Inventory/Slot"])
+    sprite = new()
     {
+      Texture = AssetsManager.Textures["UI/Inventory/Slot"],
       Position = Vector2.Zero,
       Color = Color.White,
       Source = emptySource

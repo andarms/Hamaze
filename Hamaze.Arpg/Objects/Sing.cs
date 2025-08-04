@@ -26,8 +26,9 @@ public class Sing : GameObject
 
 
 
-    Sprite sprite = new(AssetsManager.Textures["Tilesets/TilesetElement"])
+    Sprite sprite = new()
     {
+      Texture = AssetsManager.Textures["Tilesets/TilesetElement"],
       Position = Position,
       Origin = new(8, 16),
       Color = Color.White,

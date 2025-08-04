@@ -12,7 +12,10 @@ public class SpriteSheet(Texture2D texture, int frameWidth, int frameHeight) : G
   public int FrameHeight { get; } = frameHeight;
   public int TotalFrames { get; } = texture.Width / frameWidth * (texture.Height / frameHeight);
 
-  public Sprite sprite = new(texture);
+  public Sprite sprite = new()
+  {
+    Texture = texture
+  };
 
 
   public override void Initialize()

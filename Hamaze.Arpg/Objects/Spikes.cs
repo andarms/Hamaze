@@ -10,8 +10,9 @@ public class Spikes : GameObject
   public Spikes()
   {
     Name = "Spikes";
-    Sprite sprite = new(AssetsManager.Textures["Sprites/TinyDungeon"])
+    Sprite sprite = new()
     {
+      Texture = AssetsManager.Textures["Sprites/TinyDungeon"],
       Position = Position,
       Origin = new Vector2(8, 16),
       Color = Color.White,

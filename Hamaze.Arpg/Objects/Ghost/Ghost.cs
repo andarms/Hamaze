@@ -14,8 +14,9 @@ public class Ghost : DynamicObject
     public Ghost()
     {
         Name = "Ghost";
-        Sprite sprite = new(AssetsManager.Textures["Sprites/TinyDungeon"])
+        Sprite sprite = new()
         {
+            Texture = AssetsManager.Textures["Sprites/TinyDungeon"],
             Position = Position,
             Origin = new Vector2(8, 16),
             Color = Color.White,
@@ -41,8 +42,6 @@ public class Ghost : DynamicObject
         AddChild(machine);
 
         this.AddTrait(new IsSolid());
-        // WobbleMovementAnimation wobbleAnimation = new(sprite, this);
-        // AddChild(wobbleAnimation);
     }
 
     public override void Initialize()

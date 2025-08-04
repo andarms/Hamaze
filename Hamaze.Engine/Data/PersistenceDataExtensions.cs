@@ -16,9 +16,7 @@ public static class PersistenceDataExtensions
 
   public static Vector2 Deserialize(XElement element)
   {
-    var x = float.Parse(element.Attribute("X")?.Value ?? "0");
-    var y = float.Parse(element.Attribute("Y")?.Value ?? "0");
-    return new Vector2(x, y);
+    return XmlValidationHelper.SafeParseVector2(element);
   }
 
   public static XElement Serialize(this Color data, string elementName)
@@ -31,12 +29,18 @@ public static class PersistenceDataExtensions
     return element;
   }
 
+  public static Color DeserializeColor(XElement element)
+  {
+    return XmlValidationHelper.SafeParseColor(element);
+  }
+
   public static void Deserialize(this Color data, XElement element)
   {
-    data.R = byte.Parse(element.Attribute("R")?.Value ?? "255");
-    data.G = byte.Parse(element.Attribute("G")?.Value ?? "255");
-    data.B = byte.Parse(element.Attribute("B")?.Value ?? "255");
-    data.A = byte.Parse(element.Attribute("A")?.Value ?? "255");
+    var color = DeserializeColor(element);
+    data.R = color.R;
+    data.G = color.G;
+    data.B = color.B;
+    data.A = color.A;
   }
 
 
@@ -50,12 +54,18 @@ public static class PersistenceDataExtensions
     return element;
   }
 
+  public static Rectangle DeserializeRectangle(XElement element)
+  {
+    return XmlValidationHelper.SafeParseRectangle(element);
+  }
+
   public static void Deserialize(this Rectangle data, XElement element)
   {
-    data.X = int.Parse(element.Attribute("X")?.Value ?? "0");
-    data.Y = int.Parse(element.Attribute("Y")?.Value ?? "0");
-    data.Width = int.Parse(element.Attribute("Width")?.Value ?? "0");
-    data.Height = int.Parse(element.Attribute("Height")?.Value ?? "0");
+    var rect = DeserializeRectangle(element);
+    data.X = rect.X;
+    data.Y = rect.Y;
+    data.Width = rect.Width;
+    data.Height = rect.Height;
   }
 
 
