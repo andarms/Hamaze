@@ -84,6 +84,13 @@ public class GameObject : IDisposable
       child.Parent = null;
     }
   }
+
+
+  public void SetCollider(Collider collider)
+  {
+    Collider = collider;
+    CollisionsManager.AddObject(this);
+  }
   #endregion
 
   #region  Lifecycle Methods

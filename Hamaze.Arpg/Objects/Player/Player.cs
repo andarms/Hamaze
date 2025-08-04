@@ -11,8 +11,7 @@ using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Objects.Player;
 
-public class IsPlayer() : Trait("Player") { }
-
+public class IsPlayer : Trait { }
 
 public class Player : DynamicObject
 {

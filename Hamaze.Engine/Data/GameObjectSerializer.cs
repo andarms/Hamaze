@@ -2,6 +2,7 @@ using System;
 using System.Xml.Linq;
 using Hamaze.Engine.Collisions;
 using Hamaze.Engine.Core;
+using Hamaze.Engine.Systems.Traits;
 
 namespace Hamaze.Engine.Data;
 
@@ -24,7 +25,6 @@ public static class GameObjectSerializer
     ArgumentNullException.ThrowIfNull(saveData);
 
     obj.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
-
     XElement? positionData = saveData.Element("Position");
     if (positionData != null)
     {
@@ -34,32 +34,44 @@ public static class GameObjectSerializer
     XElement? colliderData = saveData.Element("Collider");
     if (colliderData != null)
     {
-      obj.Collider = new Collider();
-      obj.Collider = obj.Collider.Deserialize(colliderData);
+      Collider collider = new();
+      collider.Deserialize(colliderData);
+      obj.SetCollider(collider);
     }
 
-    // Deserialize children
     XElement? childrenElement = saveData.Element("Children");
     if (childrenElement != null)
     {
       foreach (var childElement in childrenElement.Elements())
       {
-        try
+
+        GameObject? child = GameObjectFactory.CreateFromElement(childElement);
+        if (child != null)
         {
-          GameObject? child = GameObjectFactory.CreateFromElement(childElement);
-          if (child != null)
-          {
-            child.Deserialize(childElement);
-            obj.AddChild(child);
-          }
-          else
-          {
-            Console.WriteLine($"Warning: Unknown child element type '{childElement.Name.LocalName}' skipped");
-          }
+          child.Deserialize(childElement);
+          obj.AddChild(child);
         }
-        catch (Exception ex)
+        else
         {
-          Console.WriteLine($"Error deserializing child element '{childElement.Name.LocalName}': {ex.Message}");
+          Console.WriteLine($"Warning: Unknown child element type '{childElement.Name.LocalName}' skipped");
+        }
+      }
+    }
+
+    XElement? traitsElement = saveData.Element("Traits");
+    if (traitsElement != null)
+    {
+      foreach (var traitData in traitsElement.Elements())
+      {
+        string traitType = traitData.Attribute("Type")?.Value ?? string.Empty;
+        Trait? trait = TraitFactory.CreateFromType(traitType);
+        if (trait != null)
+        {
+          obj.AddTrait(trait);
+        }
+        else
+        {
+          Console.WriteLine($"Warning: Unknown trait element type '{traitData.Name.LocalName}' skipped");
         }
       }
     }

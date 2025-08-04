@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <GameObject Name="Box">
-  <Position X="40" Y="64" />
+  <Position X="400" Y="64" />
   <Collider>
     <Offset X="0" Y="0" />
     <Size X="64" Y="64" />
@@ -15,4 +15,7 @@
       <Rotation>0</Rotation>
     </Sprite>
   </Children>
+  <Traits>
+    <Trait Type="IsSolid" />
+  </Traits>
 </GameObject>

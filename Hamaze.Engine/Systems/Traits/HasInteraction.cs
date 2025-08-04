@@ -3,7 +3,7 @@ using Hamaze.Engine.Events;
 
 namespace Hamaze.Engine.Systems.Traits;
 
-public class HasInteraction() : Trait("HasInteraction")
+public class HasInteraction : Trait
 {
   public Signal OnInteraction { get; } = new();
   public Directions? Side { get; set; } = null;

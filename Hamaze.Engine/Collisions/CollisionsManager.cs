@@ -171,6 +171,7 @@ public static class CollisionsManager
 
   public static void ResolveSolidCollision(GameObject obj, GameObject other, bool resolveX, bool resolveY)
   {
+    if (obj.Collider == null || other.Collider == null) return;
     if (other.HasTrait<IsSolid>())
     {
       StopObject(obj, other, resolveX, resolveY);
