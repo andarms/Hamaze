@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<GameObject Name="Spikes">
+  <Position X="300" Y="150" />
+  <Children>
+    <Sprite>
+      <Position X="0" Y="0" />
+      <TexturePath>Sprites/TinyDungeon</TexturePath>
+      <Color R="255" G="255" B="255" A="255" />
+      <Source X="80" Y="48" Width="16" Height="16" />
+      <Origin X="8" Y="16" />
+      <Rotation>0</Rotation>
+    </Sprite>
+    <Hitbox Name="Game Object">
+      <Position X="0" Y="0" />
+      <Collider>
+        <Offset X="0" Y="0" />
+        <Size X="64" Y="64" />
+      </Collider>
+      <DamageCalculator Type="SimpleDamage">
+        <Amount>10</Amount>
+      </DamageCalculator>
+    </Hitbox>
+  </Children>
+</GameObject>

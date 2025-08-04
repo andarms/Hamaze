@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Linq;
 using System.Xml.Serialization;
@@ -41,24 +42,11 @@ public class GameplayScene : Scene
         AddChild(ghost);
 
 
-        Box box = new()
-        {
-            Position = new Vector2(600, 64)
-        };
-        AddChild(box);
-
-
         Chest chest = new()
         {
             Position = new Vector2(400, 200)
         };
         AddChild(chest);
-
-        Spikes spikes = new()
-        {
-            Position = new Vector2(300, 150)
-        };
-        AddChild(spikes, "Background");
 
         CollectableItem sword = new(new SwordItem())
         {

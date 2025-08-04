@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
 
@@ -12,6 +13,7 @@ public static class GameObjectFactory
   private static readonly Dictionary<string, Func<GameObject>> gameObjectCreators = new()
   {
       { "GameObject", () => new GameObject() },
+      { "Hitbox", () => new Hitbox() },
       { "Sprite", () => new Sprite() }
   };
 
