@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Data;
+using Hamaze.Engine.Systems.Inventory;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -37,6 +38,10 @@ public static class MemberSerializer
       return color.Serialize(member.Name);
     }
 
+    if (value is ISaveable saveable)
+    {
+      return saveable.Serialize();
+    }
 
     return new XElement(member.Name, value);
   }
@@ -56,6 +61,7 @@ public static class MemberSerializer
       _ when type == typeof(Color) => XmlValidationHelper.SafeParseColor(element, Color.White),
       _ when type == typeof(IDamageCalculator) => DamageSerializer.Deserialize(element),
       _ when type == typeof(Texture2D) => XmlValidationHelper.SafeParseTexture(element),
+      _ when type == typeof(Item) => Item.FromElement(element),
       _ => throw new NotSupportedException($"Deserialization for type {type} is not supported.")
     };
   }

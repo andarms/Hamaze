@@ -89,7 +89,7 @@ public static class XmlValidationHelper
 
   public static Texture2D SafeParseTexture(XElement? element)
   {
-    ArgumentNullException.ThrowIfNull(element);
+    ArgumentNullException.ThrowIfNull(element, nameof(element));
     var texturePath = element.Element("TexturePath")?.Value;
     if (string.IsNullOrEmpty(texturePath))
     {
@@ -100,7 +100,7 @@ public static class XmlValidationHelper
 
   public static XElement SerializeTexture(Texture2D texture, string elementName)
   {
-    ArgumentNullException.ThrowIfNull(texture);
+    ArgumentNullException.ThrowIfNull(texture, nameof(texture));
     XElement property = new(elementName);
     property.Add(new XElement("TexturePath", texture.Name));
     return property;

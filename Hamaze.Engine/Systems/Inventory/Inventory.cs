@@ -5,23 +5,23 @@ namespace Hamaze.Engine.Systems.Inventory;
 
 public class Inventory
 {
-  private readonly List<IItem> items = [];
+  private readonly List<Item> items = [];
 
   public Signal<Inventory> OnInventoryChanged { get; } = new();
 
-  public void AddItem(IItem item)
+  public void AddItem(Item item)
   {
     items.Add(item);
     OnInventoryChanged.Emit(this);
   }
 
-  public void RemoveItem(IItem item)
+  public void RemoveItem(Item item)
   {
     items.Remove(item);
     OnInventoryChanged.Emit(this);
   }
 
-  public IReadOnlyList<IItem> GetItems()
+  public IReadOnlyList<Item> GetItems()
   {
     return items.AsReadOnly();
   }

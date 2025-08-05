@@ -17,12 +17,23 @@ public static class GameObjectSerializer
     {
       element.Add(data.Collider.Serialize("Collider"));
     }
+
+    if (data.Traits.Count > 0)
+    {
+      XElement traitsElement = new("Traits");
+      element.Add(traitsElement);
+      foreach (var (_, trait) in data.Traits)
+      {
+        XElement traitElement = trait.Serialize();
+        traitsElement.Add(traitElement);
+      }
+    }
     return element;
   }
 
   public static void Deserialize(GameObject obj, XElement saveData)
   {
-    ArgumentNullException.ThrowIfNull(saveData);
+    ArgumentNullException.ThrowIfNull(saveData, saveData.GetType().Name);
 
     obj.Name = saveData.Attribute("Name")?.Value ?? "Game Object";
     XElement? positionData = saveData.Element("Position");
@@ -63,8 +74,7 @@ public static class GameObjectSerializer
     {
       foreach (var traitData in traitsElement.Elements())
       {
-        string traitType = traitData.Attribute("Type")?.Value ?? string.Empty;
-        Trait? trait = TraitFactory.CreateFromType(traitType);
+        Trait? trait = TraitFactory.CreateFromType(traitData);
         if (trait != null)
         {
           obj.AddTrait(trait);

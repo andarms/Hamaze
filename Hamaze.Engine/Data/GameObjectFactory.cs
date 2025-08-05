@@ -4,17 +4,19 @@ using System.Xml.Linq;
 using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Graphics;
+using Hamaze.Engine.Systems.Inventory;
 
 namespace Hamaze.Engine.Data;
 
 
 public static class GameObjectFactory
 {
-  private static readonly Dictionary<string, Func<GameObject>> gameObjectCreators = new()
+  private static readonly Dictionary<string, Func<XElement, GameObject>> gameObjectCreators = new()
   {
-      { "GameObject", () => new GameObject() },
-      { "Hitbox", () => new Hitbox() },
-      { "Sprite", () => new Sprite() }
+    { "GameObject", (element) => new GameObject() },
+    { "CollectableItem", (element) => new CollectableItem() },
+    { "Hitbox", (element) => new Hitbox() },
+    { "Sprite", (element) => new Sprite() }
   };
 
   public static GameObject? CreateFromElement(XElement element)
@@ -23,14 +25,14 @@ public static class GameObjectFactory
 
     if (gameObjectCreators.TryGetValue(elementName, out var creator))
     {
-      return creator();
+      return creator(element);
     }
 
     return null;
   }
 
-  public static void RegisterType<T>(string elementName, Func<T> creator) where T : GameObject
+  public static void RegisterType<T>(string elementName, Func<XElement, T> creator) where T : GameObject
   {
-    gameObjectCreators[elementName] = () => creator();
+    gameObjectCreators[elementName] = creator;
   }
 }

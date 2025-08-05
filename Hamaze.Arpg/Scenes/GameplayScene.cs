@@ -48,15 +48,6 @@ public class GameplayScene : Scene
         };
         AddChild(chest);
 
-        CollectableItem sword = new(new SwordItem())
-        {
-            Position = new Vector2(200, 200),
-            Collider = new Collider(
-                offset: new Vector2(0, 0),
-                size: new Vector2(64)
-            )
-        };
-        AddChild(sword, "Background");
 
         Sing sing = new("Hello, world!")
         {

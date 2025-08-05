@@ -27,7 +27,7 @@ public class Sprite : GameObject
   public override void Initialize()
   {
     base.Initialize();
-    ArgumentNullException.ThrowIfNull(Texture);
+    ArgumentNullException.ThrowIfNull(Texture, nameof(Texture));
   }
 
   public override void Draw(Renderer renderer)

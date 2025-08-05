@@ -12,7 +12,7 @@ public class InventorySlot : GameObject
   Rectangle ocupiedSource = new(0, 20, 20, 20);
   readonly Sprite sprite;
 
-  public IItem? Item { get; private set; }
+  public Item? Item { get; private set; }
 
   public InventorySlot()
   {
@@ -26,7 +26,7 @@ public class InventorySlot : GameObject
     AddChild(sprite);
   }
 
-  public void AddItem(IItem item)
+  public void AddItem(Item item)
   {
     Item = item;
     Ocupied = true;

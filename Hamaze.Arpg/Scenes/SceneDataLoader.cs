@@ -45,22 +45,15 @@ public static class SceneDataLoader
 
   private static GameObject? LoadGameObjectFromXml(string dataPath)
   {
-    try
+    using StreamReader reader = new(dataPath);
+    XElement root = XElement.Load(reader);
+    GameObject gameObject = GameObjectFactory.CreateFromElement(root) ?? new GameObject();
+    gameObject.Deserialize(root);
+    if (gameObject != null)
     {
-      using StreamReader reader = new(dataPath);
-      XElement root = XElement.Load(reader);
-      GameObject gameObject = new();
-      gameObject.Deserialize(root);
-      if (gameObject != null)
-      {
-        Console.WriteLine(gameObject.Serialize());
-        return gameObject;
-      }
+      return gameObject;
     }
-    catch (Exception ex)
-    {
-      Console.WriteLine($"Error loading XML file {dataPath}: {ex.Message}");
-    }
+
     return null;
   }
 
