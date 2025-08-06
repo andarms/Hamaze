@@ -9,9 +9,25 @@ namespace Hamaze.Arpg.Scenes;
 
 public static class SceneDataLoader
 {
-  public static IEnumerable<GameObject> LoadGameObjects()
+
+  public static void LoadResources(string dataDirectory)
   {
-    string dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
+    if (!Directory.Exists(dataDirectory))
+    {
+      Console.WriteLine($"Warning: Data directory not found at {dataDirectory}");
+      return;
+    }
+
+    string[] xresFiles = Directory.GetFiles(dataDirectory, "*.xres", SearchOption.AllDirectories);
+    Console.WriteLine($"Found {xresFiles.Length} XRES file(s) in {dataDirectory}:");
+    foreach (string xresFile in xresFiles)
+    {
+      Console.WriteLine($"  - {xresFile}");
+    }
+  }
+
+  public static IEnumerable<GameObject> LoadGameObjects(string dataDirectory)
+  {
     if (!Directory.Exists(dataDirectory))
     {
       Console.WriteLine($"Warning: Data directory not found at {dataDirectory}");

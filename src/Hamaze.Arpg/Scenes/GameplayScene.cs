@@ -18,6 +18,8 @@ namespace Hamaze.Arpg.Scenes;
 
 public class GameplayScene : Scene
 {
+    const string GameDirectory = @"C:\Users\andar\apps\Hamaze\data";
+
     public override Color BackgroundColor => Color.CornflowerBlue;
 
     Player player;
@@ -67,10 +69,12 @@ public class GameplayScene : Scene
         player.Inventory.OnInventoryChanged.Connect(inventoryScene.UpdateInventory);
 
 
-        foreach (GameObject obj in SceneDataLoader.LoadGameObjects())
+        foreach (GameObject obj in SceneDataLoader.LoadGameObjects(GameDirectory))
         {
             AddChild(obj);
         }
+
+        SceneDataLoader.LoadResources(GameDirectory);
     }
 
 
