@@ -159,3 +159,10 @@ If you encounter any issues or have questions:
 ---
 
 **Happy Game Development! 🎮**
+
+## Resources
+
+- Load all xres files
+- Create Dictionary<string, Resource>
+- Initialize the each resource
+- Resolve resources references

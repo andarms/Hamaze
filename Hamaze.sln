@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Arpg", "Hamaze.Arpg\Hamaze.Arpg.csproj", "{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Arpg", "src\Hamaze.Arpg\Hamaze.Arpg.csproj", "{3D9090B7-D19D-469D-801E-9BCCE32C2BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Desktop", "Hamaze.Desktop\Hamaze.Desktop.csproj", "{7C50B115-EA19-47DA-AB83-DDCD166F5E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Desktop", "src\Hamaze.Desktop\Hamaze.Desktop.csproj", "{7C50B115-EA19-47DA-AB83-DDCD166F5E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Engine", "Hamaze.Engine\Hamaze.Engine.csproj", "{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamaze.Engine", "src\Hamaze.Engine\Hamaze.Engine.csproj", "{FAA9E8E9-CB26-48DF-BB56-F4111B41A649}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
