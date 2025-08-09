@@ -3,5 +3,8 @@
     "**/bin": true,
     "**/obj": true,
     "**/.config": true,
+  },
+  "files.associations": {
+    "*.xres": "xml" // example for your game engine resources
   }
 }

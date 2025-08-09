@@ -5,7 +5,7 @@ using Hamaze.Engine.Graphics;
 
 namespace Hamaze.Engine.Systems.Inventory;
 
-public class Item : ISaveable, IUsable
+public class Item : Resource, IUsable
 {
   public string Name { get; protected set; } = String.Empty;
   public string Description { get; protected set; } = String.Empty;
@@ -18,7 +18,7 @@ public class Item : ISaveable, IUsable
     // Override in derived classes for specific behavior
   }
 
-  public virtual void Deserialize(XElement data)
+  public override void Deserialize(XElement data)
   {
     Name = data.Element("Name")?.Value ?? String.Empty;
     Description = data.Element("Description")?.Value ?? String.Empty;
@@ -38,7 +38,7 @@ public class Item : ISaveable, IUsable
     }
   }
 
-  public virtual XElement Serialize()
+  public override XElement Serialize()
   {
     XElement element = new("Item");
     element.SetAttributeValue("Type", GetType().Name);
