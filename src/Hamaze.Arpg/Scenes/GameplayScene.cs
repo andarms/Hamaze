@@ -4,6 +4,7 @@ using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Items;
 using Hamaze.Arpg.Objects.Player;
 using Hamaze.Engine.Collisions;
+using Hamaze.Engine.Components.Attack;
 using Hamaze.Engine.Core;
 using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
@@ -75,22 +76,31 @@ public class GameplayScene : Scene
         SceneDataLoader.LoadResources(GameDirectory);
 
 
-        SwordItem swordItem = new() { };
-        CanBeCollected trait = new()
+        GameObject spikes = new()
         {
-            Item = swordItem
+            Name = "Spikes",
+            Position = new Vector2(300, 200),
+
         };
-        CollectableItem collectableItem = new()
+        Sprite sprite = new()
         {
-            Position = new Vector2(200, 200),
+            Position = new Vector2(300, 200),
+            Texture = AssetsManager.Textures["Sprites/TinyDungeon"],
+            Source = new Rectangle(80, 48, 16, 16),
+            Origin = new Vector2(8, 16)
+        };
+        Hitbox hitbox = new()
+        {
             Collider = new Collider
             {
-                Size = new Vector2(32, 32),
+                Size = new Vector2(64, 64),
                 Offset = new Vector2(0, 0)
-            }
+            },
+            DamageCalculator = new SimpleDamage(10)
         };
-        collectableItem.AddTrait(trait);
-        Console.WriteLine(collectableItem.Serialize());
+        spikes.AddChild(sprite);
+        spikes.AddChild(hitbox);
+        Console.WriteLine(spikes.Serialize());
     }
 
 

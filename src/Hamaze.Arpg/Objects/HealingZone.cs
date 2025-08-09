@@ -10,6 +10,8 @@ namespace Hamaze.Arpg.Objects;
 public class HealingZone : GameObject
 {
   const int HEALING_AMOUNT = 10;
+  readonly TriggerZone zone;
+
   public HealingZone()
   {
     Name = "Healing Zone";
@@ -18,12 +20,18 @@ public class HealingZone : GameObject
       size: new Vector2(64)
     );
 
-
-    TriggerZone zone = new();
+    zone = new TriggerZone();
     zone.OnEnter.Connect(HandleEnter);
     this.AddTrait(new HasTriggerZone(zone));
 
     CollisionsManager.AddObject(this);
+  }
+
+
+  public override void Initialize()
+  {
+    base.Initialize();
+
   }
 
   private void HandleEnter(GameObject other)
