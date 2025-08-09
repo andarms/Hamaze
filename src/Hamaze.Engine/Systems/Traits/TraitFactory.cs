@@ -24,9 +24,12 @@ public static class TraitFactory
   private static CanBeCollected CreateCanBeCollected(XElement element)
   {
     CanBeCollected trait = new();
-    XElement itemElement = element.Element("Item") ?? throw new InvalidOperationException("Item element is missing or invalid.");
-    Item newItem = Item.FromElement(itemElement) ?? throw new InvalidOperationException("Item2 element is missing or invalid.");
-    trait.Item = newItem;
+    XElement? itemElement = element.Element("Resource");
+    if (itemElement != null)
+    {
+      Item newItem = Item.FromElement(itemElement) ?? throw new InvalidOperationException("Item element is missing or invalid.");
+      trait.Item = newItem;
+    }
     return trait;
   }
 }

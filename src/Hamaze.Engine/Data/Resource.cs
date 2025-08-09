@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using Hamaze.Engine.Core;
 
@@ -19,15 +18,16 @@ public abstract class Resource : ISaveable
         continue;
       }
 
-      if (ResourceManager.IsResourceTypeRegistered(property.PropertyType.Name))
+      // Prefer direct element by name, else property-tagged generic wrapper
+      XElement? element = data.Element(property.Name);
+      if (element == null)
       {
-        XElement ee = data.Element("Resource") ?? throw new InvalidOperationException($"Missing element: {property.Name}");
-        var vv = MemberSerializer.Deserialize(ee, property.PropertyType);
-        property.SetValue(this, vv);
-        continue;
+        element = data.Elements().FirstOrDefault(e => (string?)e.Attribute("property") == property.Name);
       }
-
-      XElement element = data.Element(property.Name) ?? throw new InvalidOperationException($"Missing element: {property.Name}");
+      if (element == null)
+      {
+        throw new InvalidOperationException($"Missing element: {property.Name}");
+      }
       var value = MemberSerializer.Deserialize(element, property.PropertyType);
       property.SetValue(this, value);
     }
@@ -35,8 +35,8 @@ public abstract class Resource : ISaveable
 
   public virtual XElement Serialize()
   {
-    XElement element = new("Resource");
-    element.SetAttributeValue("Type", GetType().Name);
+    XElement root = new("Resource");
+    root.SetAttributeValue("Type", GetType().Name);
 
     foreach (var member in GetSavedMembers())
     {
@@ -46,10 +46,15 @@ public abstract class Resource : ISaveable
       }
 
       var value = property.GetValue(this);
-      element.Add(MemberSerializer.Serialize(property, value));
+      var e = MemberSerializer.Serialize(property, value);
+      if (e.Name.LocalName == "GameObject")
+      {
+        e.SetAttributeValue("property", property.Name);
+      }
+      root.Add(e);
     }
 
-    return element;
+    return root;
   }
 
   public IEnumerable<MemberInfo> GetSavedMembers()

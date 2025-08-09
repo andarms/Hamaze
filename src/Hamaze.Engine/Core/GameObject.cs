@@ -60,6 +60,8 @@ public class GameObject : IDisposable
         root.Add(m);
       }
     }
+    // If a CanBeCollected trait exists but has no Item, and this object has an Item property,
+    // connect them in-memory after load; serialization remains single-source of truth.
     if (Children.Count > 0)
     {
       var childrenElement = new XElement("Children");
@@ -86,8 +88,29 @@ public class GameObject : IDisposable
         continue;
       }
 
-      var value = MemberSerializer.Deserialize(data.Element(property.Name) ?? throw new InvalidOperationException($"Missing element: {property.Name}"), property.PropertyType);
+      // Support property-tagged resources and game objects where the element might be a generic wrapper
+      var direct = data.Element(property.Name);
+      XElement? selected = direct;
+      if (selected == null)
+      {
+        // Try find by property attribute
+        selected = data.Elements()
+          .FirstOrDefault(e => (string?)e.Attribute("property") == property.Name);
+      }
+      var value = MemberSerializer.Deserialize(selected ?? throw new InvalidOperationException($"Missing element: {property.Name}"), property.PropertyType);
       property.SetValue(this, value);
+    }
+
+    // Wire trait Item from object-level Item if applicable
+    var canBeCollected = this.Trait<Systems.Inventory.CanBeCollected>();
+    var itemProp = GetType().GetProperty("Item", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+    if (canBeCollected != null && itemProp != null)
+    {
+      var itemVal = itemProp.GetValue(this) as Systems.Inventory.Item;
+      if (itemVal != null)
+      {
+        canBeCollected.Item = itemVal;
+      }
     }
   }
 

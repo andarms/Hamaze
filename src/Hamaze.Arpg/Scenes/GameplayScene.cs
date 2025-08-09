@@ -75,6 +75,15 @@ public class GameplayScene : Scene
         }
 
         SceneDataLoader.LoadResources(GameDirectory);
+
+
+        SwordItem swordItem = new() { };
+        CollectableItem collectableItem = new()
+        {
+            Item = swordItem,
+            Position = new Vector2(200, 200)
+        };
+        Console.WriteLine(collectableItem.Serialize());
     }
 
 

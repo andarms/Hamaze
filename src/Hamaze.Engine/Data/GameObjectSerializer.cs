@@ -10,8 +10,9 @@ public static class GameObjectSerializer
 {
   public static XElement Serialize(GameObject data)
   {
-    XElement element = new(data.GetType().Name);
+    XElement element = new("GameObject");
     element.SetAttributeValue("Name", data.Name);
+    element.SetAttributeValue("type", data.GetType().Name);
     element.Add(data.Position.Serialize("Position"));
     if (data.Collider != null)
     {

@@ -21,7 +21,7 @@ public static class GameObjectFactory
 
   public static GameObject? CreateFromElement(XElement element)
   {
-    string elementName = element.Name.LocalName;
+    string elementName = element.Attribute("type")?.Value ?? element.Name.LocalName;
 
     if (gameObjectCreators.TryGetValue(elementName, out var creator))
     {

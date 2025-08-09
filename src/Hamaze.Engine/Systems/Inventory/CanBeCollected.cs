@@ -16,12 +16,6 @@ public class CanBeCollected : Trait
   public override XElement Serialize()
   {
     XElement element = base.Serialize();
-    if (Item != null)
-    {
-
-      XElement itemElement = Item.Serialize();
-      element.Add(new XElement(itemElement));
-    }
     return element;
   }
 }

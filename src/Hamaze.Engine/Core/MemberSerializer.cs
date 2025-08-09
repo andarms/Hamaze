@@ -40,7 +40,20 @@ public static class MemberSerializer
 
     if (value is ISaveable saveable)
     {
-      return saveable.Serialize();
+      var e = saveable.Serialize();
+      // Tag the property name if the element is a generic wrapper
+      if (e.Name.LocalName == "Resource")
+      {
+        e.SetAttributeValue("property", member.Name);
+      }
+      return e;
+    }
+
+    if (value is GameObject gameObject)
+    {
+      var e = gameObject.Serialize() ?? new XElement(member.Name);
+      e.SetAttributeValue("property", member.Name);
+      return e;
     }
 
     return new XElement(member.Name, value);
@@ -49,9 +62,19 @@ public static class MemberSerializer
 
   public static object? Deserialize(XElement element, Type type)
   {
-    if (ResourceManager.IsResourceTypeRegistered(type.Name))
+    if (typeof(Resource).IsAssignableFrom(type))
     {
-      return ResourceManager.Create(type.Name);
+      // Create and populate a resource
+      var resource = (Resource)Activator.CreateInstance(type)!;
+      resource.Deserialize(element);
+      return resource;
+    }
+
+    if (typeof(GameObject).IsAssignableFrom(type))
+    {
+      var go = GameObjectFactory.CreateFromElement(element) ?? (GameObject)Activator.CreateInstance(type)!;
+      go.Deserialize(element);
+      return go;
     }
     return type switch
     {
