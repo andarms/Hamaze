@@ -27,7 +27,8 @@ public static class TraitFactory
     XElement? itemElement = element.Element("Resource");
     if (itemElement != null)
     {
-      Item newItem = Item.FromElement(itemElement) ?? throw new InvalidOperationException("Item element is missing or invalid.");
+      var newItem = new Item();
+      newItem.Deserialize(itemElement);
       trait.Item = newItem;
     }
     return trait;

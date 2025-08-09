@@ -1,7 +1,4 @@
 using System;
-using System.Data;
-using System.Linq;
-using System.Xml.Serialization;
 using Hamaze.Arpg.Objects;
 using Hamaze.Arpg.Objects.Ghost;
 using Hamaze.Arpg.Objects.Items;
@@ -12,6 +9,7 @@ using Hamaze.Engine.Core.Scenes;
 using Hamaze.Engine.Graphics;
 using Hamaze.Engine.Input;
 using Hamaze.Engine.Systems.Inventory;
+using Hamaze.Engine.Systems.Traits;
 using Microsoft.Xna.Framework;
 
 namespace Hamaze.Arpg.Scenes;
@@ -78,11 +76,20 @@ public class GameplayScene : Scene
 
 
         SwordItem swordItem = new() { };
+        CanBeCollected trait = new()
+        {
+            Item = swordItem
+        };
         CollectableItem collectableItem = new()
         {
-            Item = swordItem,
-            Position = new Vector2(200, 200)
+            Position = new Vector2(200, 200),
+            Collider = new Collider
+            {
+                Size = new Vector2(32, 32),
+                Offset = new Vector2(0, 0)
+            }
         };
+        collectableItem.AddTrait(trait);
         Console.WriteLine(collectableItem.Serialize());
     }
 
